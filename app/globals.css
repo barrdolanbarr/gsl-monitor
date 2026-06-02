@@ -82,3 +82,69 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .chartbox{margin-top:8px}
 .foot{padding:14px 20px;font-size:10.5px;color:var(--muted);font-family:var(--mono);line-height:1.6}
 .foot a{color:var(--accent2)}
+
+/* ============ PHASE 1: refined map styling ============ */
+.leaflet-container{background:#eef2ef;font-family:var(--sans);animation:mapfade .8s ease both}
+@keyframes mapfade{from{opacity:0}to{opacity:1}}
+
+/* custom zoom control position bottom-left, restyled */
+.leaflet-control-layers{
+  border:1px solid var(--line)!important;border-radius:12px!important;
+  box-shadow:var(--shadow)!important;overflow:hidden;
+  font-family:var(--sans)!important;
+  backdrop-filter:saturate(1.1) blur(2px);
+  background:rgba(255,255,255,.96)!important;
+}
+.leaflet-control-layers-toggle{width:38px!important;height:38px!important}
+.leaflet-control-layers-expanded{padding:12px 14px!important;font-size:12.5px}
+.leaflet-control-layers label{margin-bottom:4px;cursor:pointer}
+.leaflet-control-layers-selector{margin-right:6px}
+
+/* marker glow halos via drop-shadow on the svg paths */
+.mk{transition:filter .2s,r .2s}
+.mk-inflow_major{filter:drop-shadow(0 0 5px rgba(28,126,214,.55))}
+.mk-inflow_minor{filter:drop-shadow(0 0 3px rgba(116,192,232,.5))}
+.mk-lake_stage{filter:drop-shadow(0 0 7px rgba(47,158,110,.6))}
+.mk:hover{filter:drop-shadow(0 0 10px rgba(28,126,214,.85))}
+
+/* floating title badge */
+.map-badge{
+  position:absolute;left:14px;top:14px;z-index:500;
+  display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(6px) saturate(1.1);
+  border:1px solid var(--line);border-radius:30px;
+  padding:8px 15px 8px 13px;font-size:12.5px;font-weight:600;color:var(--ink);
+  box-shadow:var(--shadow);letter-spacing:-.01em;
+  animation:badgein .9s cubic-bezier(.2,.8,.2,1) both .2s;
+}
+@keyframes badgein{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.mb-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(15,123,84,.5);animation:pulse 2s infinite}
+
+/* legend redesign */
+.legend{
+  position:absolute;right:14px;bottom:26px;z-index:500;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(6px);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  font-size:11.5px;box-shadow:var(--shadow);min-width:160px;
+  animation:badgein .9s cubic-bezier(.2,.8,.2,1) both .35s;
+}
+.legend .lg-title{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:8px}
+.legend .li{display:flex;align-items:center;gap:9px;padding:3px 0;color:var(--ink)}
+.legend .sw{width:11px;height:11px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 5px rgba(0,0,0,.12)}
+.legend .sq{width:11px;height:11px;border-radius:3px;border:2px solid;background:transparent;flex:0 0 auto}
+.legend .radar-li .grad{width:22px;height:9px;border-radius:3px;flex:0 0 auto;
+  background:linear-gradient(90deg,#22c1dc,#43d17a,#e8d24a,#e0612e,#c0294f)}
+
+/* popups */
+.gsl-popup .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:0 8px 30px rgba(20,40,30,.18);border:1px solid var(--line);padding:2px}
+.gsl-popup .leaflet-popup-content{margin:13px 15px;width:250px!important}
+.gsl-popup .leaflet-popup-tip{border:1px solid var(--line)}
+.popup .pop-head{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.popup .pop-head b{font-size:13.5px;line-height:1.25}
+.popup .big{font-family:var(--mono);font-size:26px;font-weight:800;letter-spacing:-.02em;margin:2px 0 4px}
+.popup .big span{font-size:12px;font-weight:400;color:var(--muted)}
+.popup .row{font-family:var(--mono);font-size:12px;margin-top:2px}
+.popup .row.dim,.popup .small.dim{color:var(--muted)}
+.popup .small{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}
+.popup .tag{align-self:flex-start;font-size:9.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:5px}
+.ws-tip{font-size:12px;border-radius:10px!important;border:1px solid var(--line)!important;box-shadow:var(--shadow)!important}
