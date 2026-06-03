@@ -1,0 +1,58 @@
+{
+  "_about": "Configuration for the GSL-SWY+ v1 pilot run on the Bear River basin (outlet = USGS 10126000 near Corinne). Values sourced from the monitor's lib/data.ts (single source of truth) plus the model design doc. Hypsometric band fractions are an approximate v1 discretization of the Bear basin above Corinne; the orographic precipitation multiplier and melt factor are calibrated against the gauge, so the band areas need only be approximately right.",
+
+  "pilot": {
+    "name": "Bear River",
+    "outlet_gauge": "10126000",
+    "outlet_gauge_name": "BEAR RIVER NEAR CORINNE, UT",
+    "share_of_gsl_inflow": 0.58,
+    "drainage_area_sqmi": 7500,
+    "latitude_deg": 41.6
+  },
+
+  "elevation_bands": [
+    {"name": "valley_plain",  "elev_m": 1550, "area_frac": 0.20},
+    {"name": "foothills",     "elev_m": 1850, "area_frac": 0.28},
+    {"name": "mid_mountain",  "elev_m": 2150, "area_frac": 0.25},
+    {"name": "upper_mountain","elev_m": 2450, "area_frac": 0.16},
+    {"name": "subalpine",     "elev_m": 2750, "area_frac": 0.08},
+    {"name": "alpine",        "elev_m": 3100, "area_frac": 0.03}
+  ],
+
+  "lake": {
+    "_comment": "South-arm (Saltair, gage 10010000) stage-area hypsometry; linearized near current stage. From lib/data.ts HYPSOMETRY.",
+    "ref_stage_ft": 4192,
+    "ref_area_sqmi": 950,
+    "d_area_per_ft_sqmi": 28,
+    "healthy_elev_ft": 4198,
+    "recent_south_arm_ft": 4191.1,
+    "structural_shortfall_af": 800000,
+    "avg_annual_river_inflow_af": 2900000
+  },
+
+  "routing": {
+    "_comment": "Net basin yield reaching the lake via the Bear is reduced by upstream consumptive depletion + conveyance/reservoir losses, then lagged. The gauge at Corinne already integrates most upstream depletion, so for the v1 lake-stage conversion we treat gauge volume as the water delivered to the lake from the Bear.",
+    "groundwater_lag_years": 5.7,
+    "af_per_cfs_year": 723.968
+  },
+
+  "seeding": {
+    "_comment": "Cloud-seeding context from lib/data.ts SEEDING_CONTEXT. The paired model run adds a seeded precipitation increment to winter months in the snow-bearing bands.",
+    "per_event_validated_af": 5.35,
+    "full_deploy_low_af": 1000,
+    "full_deploy_high_af": 8000,
+    "delivery_factor_to_lake": 0.25,
+    "to_lake_low_af": 250,
+    "to_lake_high_af": 2000,
+    "seeded_precip_increment_pct": {
+      "low": 0.03,
+      "central": 0.06,
+      "high": 0.10,
+      "_note": "Fractional increase in cool-season (Nov-Mar) precipitation over seedable (snow-bearing) elevation bands during seeding operations. Range reflects published winter-orographic glaciogenic seeding effect sizes (~3-15% on precip in targeted storms/areas). Treated as an uncertain Monte Carlo parameter."
+    },
+    "seedable_months": [11, 12, 1, 2, 3],
+    "seedable_min_elev_m": 1850,
+    "seeded_treatable_fraction": 0.03,
+    "_treatable_note": "The published 3-10% increment is the effect in TARGETED storms over TARGETED areas, not a basin-wide season-long increase. The effective basin-wide cool-season precip bump is the increment times this treatable fraction = (targeted area share ~0.15-0.25) x (seedable-storm precip share ~0.15-0.20). 0.03 anchors the central physical yield (~4,700 AF at the outlet, ~1,170 AF to the lake) inside the operationally-validated full-deployment envelope (1,000-8,000 AF outlet; 250-2,000 AF to lake). Without it the physical pathway overstates the field-validated effect ~30x."
+  }
+}

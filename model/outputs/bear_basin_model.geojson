@@ -1,0 +1,28 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -112.1,
+          41.62
+        ]
+      },
+      "properties": {
+        "id": "bear_outlet_model",
+        "title": "Bear River \u2014 GSL-SWY+ model",
+        "gauge": "10126000",
+        "nash_sutcliffe": 0.558,
+        "percent_bias": 1.4,
+        "modeled_yield_af": 1151577,
+        "observed_yield_af": 1142962,
+        "seeding_delta_af_to_lake_p50": 1204,
+        "seeding_delta_stage_in_p50": 0.0244,
+        "seeding_delta_stage_in_p05": 0.0153,
+        "seeding_delta_stage_in_p95": 0.0349
+      }
+    }
+  ]
+}

@@ -12,6 +12,7 @@ function fmt(n: any, d = 0) {
 
 export default function Page() {
   const [data, setData] = useState<any>(null);
+  const [model, setModel] = useState<any>(null);
   const [updated, setUpdated] = useState<string>("");
 
   async function load() {
@@ -24,9 +25,19 @@ export default function Page() {
   }
   useEffect(() => {
     load();
+    // GSL-SWY+ model outputs are precomputed offline and written to public/
+    fetch("/model_outputs.json", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m) => setModel(m))
+      .catch(() => {});
     const t = setInterval(load, 5 * 60 * 1000); // refresh every 5 min
     return () => clearInterval(t);
   }, []);
+
+  const mCal = model?.calibration;
+  const mSeedLake = model?.seeding_uncertainty?.seeding_delta_af_to_lake;
+  const mSeedStage = model?.seeding_uncertainty?.seeding_delta_stage_inches_per_year;
+  const mLake = model?.lake_context;
 
   const sites = data?.sites ?? {};
   const saltair = sites["10010000"]?.params?.["62614"]?.value;
@@ -136,13 +147,33 @@ export default function Page() {
           </div>
         </div>
 
+        {/* GSL-SWY+ MODEL RESULTS */}
+        {model && (
+          <div className="section">
+            <h2>GSL-SWY+ model — Bear River pilot</h2>
+            <div className="statgrid">
+              <div className="stat"><div className="k">Modeled yield</div><div className="v">{fmt(mCal?.modeled_annual_af / 1000)}<small>K AF/yr</small></div></div>
+              <div className="stat"><div className="k">Observed yield</div><div className="v">{fmt(mCal?.observed_annual_af / 1000)}<small>K AF/yr</small></div></div>
+              <div className="stat"><div className="k">Fit (NSE)</div><div className="v">{fmt(mCal?.nash_sutcliffe, 2)}</div></div>
+              <div className="stat"><div className="k">Volume bias</div><div className="v">{fmt(mCal?.percent_bias, 1)}<small>%</small></div></div>
+            </div>
+            <div className="seed-row"><span>Seeding → lake (p50)</span><b>{fmt(mSeedLake?.p50)} AF/yr</b></div>
+            <div className="seed-row"><span>90% range</span><span className="pct">{fmt(mSeedLake?.p05)}–{fmt(mSeedLake?.p95)} AF/yr</span></div>
+            <div className="seed-row"><span>Stage effect (p50)</span><b>{fmt(mSeedStage?.p50, 3)} in/yr</b></div>
+            <div className="seed-row"><span>Yrs to offset shortfall</span><b>{fmt(mLake?.years_of_seeding_to_offset_structural_shortfall)}</b></div>
+            <div className="note">
+              Snow-aware monthly water balance (6 elevation bands), calibrated to USGS gauge {model?.meta?.outlet_gauge} over {model?.meta?.gauge_years} yrs. Seeding effect is a paired baseline/seeded run; uncertainty is {model?.seeding_uncertainty?.n_draws} Monte Carlo draws over uncertain physical parameters. {mLake?.honesty_note}
+            </div>
+          </div>
+        )}
+
         <div className="foot">
           Data: USGS National Water Information System (waterservices.usgs.gov), public/no-key. Lake facts: USU GSL Strike Team, UT DNR, Grow the Flow. Seeding context: bottom-up estimate from Rainmaker disclosed validation — illustrative, not company figures.
         </div>
       </aside>
 
       <main className="mapwrap">
-        {data ? <GSLMap data={data} /> : <div className="loading">fetching live USGS data…</div>}
+        {data ? <GSLMap data={data} model={model} /> : <div className="loading">fetching live USGS data…</div>}
       </main>
     </div>
   );

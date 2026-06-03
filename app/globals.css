@@ -105,6 +105,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .mk-inflow_major{filter:drop-shadow(0 0 5px rgba(28,126,214,.55))}
 .mk-inflow_minor{filter:drop-shadow(0 0 3px rgba(116,192,232,.5))}
 .mk-lake_stage{filter:drop-shadow(0 0 7px rgba(47,158,110,.6))}
+.mk-model{filter:drop-shadow(0 0 8px rgba(138,63,252,.7))}
 .mk:hover{filter:drop-shadow(0 0 10px rgba(28,126,214,.85))}
 
 /* floating title badge */

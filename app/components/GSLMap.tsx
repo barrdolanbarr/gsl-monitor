@@ -16,13 +16,20 @@ const BASIN_POLYS: Record<string, [number, number][]> = {
 };
 const BASIN_COLOR: Record<string,string> = { Bear:"#1c7ed6", Weber:"#c08a2e", Jordan:"#2f9e6e" };
 
+const MODEL_COLOR = "#8a3ffc";   // GSL-SWY+ model layer accent
+const OUTLET_LATLON: [number, number] = [41.62, -112.10];   // Bear River near Corinne (outlet gauge)
+
 function fmt(n: number | undefined, d = 0) {
   if (n === undefined || n === null || isNaN(n)) return "—";
   return n.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d });
 }
 
-export default function GSLMap({ data }: { data: any }) {
+export default function GSLMap({ data, model }: { data: any; model?: any }) {
   const sites = data?.sites ?? {};
+  const cal = model?.calibration;
+  const seedLake = model?.seeding_uncertainty?.seeding_delta_af_to_lake;
+  const seedStage = model?.seeding_uncertainty?.seeding_delta_stage_inches_per_year;
+  const lakeCtx = model?.lake_context;
 
   return (
     <MapContainer
@@ -94,6 +101,44 @@ export default function GSLMap({ data }: { data: any }) {
             ))}
           </>
         </LayersControl.Overlay>
+
+        {model && (
+          <LayersControl.Overlay checked name="GSL-SWY+ model (Bear pilot)">
+            <CircleMarker
+              center={OUTLET_LATLON}
+              radius={11}
+              pane="datamarkers"
+              pathOptions={{
+                color: "#ffffff", weight: 2,
+                fillColor: MODEL_COLOR, fillOpacity: 1,
+                className: "mk mk-model",
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -8]}>
+                <b>GSL-SWY+ model</b> · Bear River pilot
+              </Tooltip>
+              <Popup className="gsl-popup">
+                <div className="popup">
+                  <div className="pop-head">
+                    <b>{model?.meta?.model ?? "GSL-SWY+"} — {model?.meta?.pilot ?? "Bear River"}</b>
+                    <span className="tag" style={{ background: MODEL_COLOR + "1f", color: MODEL_COLOR }}>
+                      model
+                    </span>
+                  </div>
+                  <div className="big">{fmt(cal?.modeled_annual_af)} <span>AF/yr modeled yield</span></div>
+                  <div className="row">observed {fmt(cal?.observed_annual_af)} AF/yr · NSE {fmt(cal?.nash_sutcliffe, 2)} · bias {fmt(cal?.percent_bias, 1)}%</div>
+                  <div className="row dim">Snow-aware monthly water balance, calibrated to gauge {model?.meta?.outlet_gauge ?? "10126000"}.</div>
+                  <hr style={{ border: "none", borderTop: "1px solid #0001", margin: "8px 0" }} />
+                  <div className="row"><b>Cloud-seeding effect</b> (Monte Carlo, n={model?.seeding_uncertainty?.n_draws})</div>
+                  <div className="row">→ to lake: <b>{fmt(seedLake?.p50)}</b> AF/yr <span className="dim">({fmt(seedLake?.p05)}–{fmt(seedLake?.p95)})</span></div>
+                  <div className="row">→ stage: <b>{fmt(seedStage?.p50, 3)}</b> in/yr <span className="dim">({fmt(seedStage?.p05, 3)}–{fmt(seedStage?.p95, 3)})</span></div>
+                  <div className="row">≈ {fmt(lakeCtx?.years_of_seeding_to_offset_structural_shortfall)} yrs to offset the structural shortfall</div>
+                  <div className="small dim" style={{ marginTop: 6 }}>{lakeCtx?.honesty_note}</div>
+                </div>
+              </Popup>
+            </CircleMarker>
+          </LayersControl.Overlay>
+        )}
       </LayersControl>
 
       {STATIONS.map((s: Station) => {
@@ -156,6 +201,7 @@ export default function GSLMap({ data }: { data: any }) {
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_major }} /> Major inflow</div>
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_minor }} /> Minor inflow</div>
         <div className="li"><span className="sq" style={{ borderColor: "#1c7ed6" }} /> Watershed</div>
+        {model && <div className="li"><span className="sw" style={{ background: MODEL_COLOR }} /> GSL-SWY+ model</div>}
         <div className="li radar-li"><span className="grad" /> Radar reflectivity</div>
       </div>
     </MapContainer>
