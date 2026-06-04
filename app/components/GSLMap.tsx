@@ -24,21 +24,105 @@ function fmt(n: number | undefined, d = 0) {
   return n.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d });
 }
 
-export default function GSLMap({ data, model }: { data: any; model?: any }) {
+/* ---- color ramps: each takes t in [0,1] and returns an rgb() string ---- */
+type Stop = [number, [number, number, number]];
+function rampFn(stops: Stop[]) {
+  return (t: number) => {
+    t = Math.max(0, Math.min(1, t));
+    for (let i = 1; i < stops.length; i++) {
+      const [t1, c1] = stops[i];
+      if (t <= t1) {
+        const [t0, c0] = stops[i - 1];
+        const f = t1 === t0 ? 0 : (t - t0) / (t1 - t0);
+        const c = [0, 1, 2].map((k) => Math.round(c0[k] + (c1[k] - c0[k]) * f));
+        return `rgb(${c[0]},${c[1]},${c[2]})`;
+      }
+    }
+    const last = stops[stops.length - 1][1];
+    return `rgb(${last[0]},${last[1]},${last[2]})`;
+  };
+}
+// terrain: green lowlands -> tan -> brown -> white peaks
+const RAMP_ELEV = rampFn([
+  [0.0, [120, 158, 110]], [0.35, [196, 190, 130]], [0.6, [170, 132, 86]],
+  [0.82, [120, 92, 70]], [1.0, [244, 246, 248]],
+]);
+// snow zone: pale -> blue
+const RAMP_SNOW = rampFn([[0.0, [231, 240, 246]], [0.5, [126, 178, 214]], [1.0, [25, 92, 168]]]);
+// runoff efficiency: pale sand -> teal -> deep green
+const RAMP_RUNOFF = rampFn([[0.0, [238, 234, 214]], [0.5, [110, 186, 168]], [1.0, [15, 110, 84]]]);
+// hotspots (matches the radar gradient): cyan -> green -> yellow -> orange -> red
+const RAMP_HOT = rampFn([
+  [0.0, [34, 193, 220]], [0.3, [67, 209, 122]], [0.55, [232, 210, 74]],
+  [0.8, [224, 97, 46]], [1.0, [192, 41, 79]],
+]);
+
+function ringToLatLng(coords: number[][]): [number, number][] {
+  return coords.map(([lon, lat]) => [lat, lon]);
+}
+
+/** A choropleth overlay: colors every grid cell by one property via a ramp. */
+function Choro({
+  features, accessor, ramp, label, unit, decimals = 2, normLo, normHi,
+}: {
+  features: any[];
+  accessor: (p: any) => number;
+  ramp: (t: number) => string;
+  label: string;
+  unit: string;
+  decimals?: number;
+  normLo?: number;
+  normHi?: number;
+}) {
+  const vals = features.map((f) => accessor(f.properties));
+  const lo = normLo ?? Math.min(...vals);
+  const hi = normHi ?? Math.max(...vals);
+  return (
+    <>
+      {features.map((f, i) => {
+        const v = accessor(f.properties);
+        const t = hi > lo ? (v - lo) / (hi - lo) : 0;
+        const ring = ringToLatLng(f.geometry.coordinates[0]);
+        return (
+          <Polygon
+            key={i}
+            positions={ring}
+            pane="choro"
+            pathOptions={{ stroke: true, color: "#ffffff", weight: 0.4, opacity: 0.35,
+                           fillColor: ramp(t), fillOpacity: 0.62 }}
+          >
+            <Tooltip sticky className="ws-tip">
+              <b>{label}: {fmt(v, decimals)}{unit}</b><br />
+              <span style={{ opacity: .7 }}>
+                {f.properties.elevation_m} m · snow {fmt(f.properties.snow_fraction, 2)} ·
+                runoff {fmt(f.properties.runoff_ratio, 2)} · →lake {fmt(f.properties.af_to_lake_per_yr, 1)} AF/yr
+              </span>
+            </Tooltip>
+          </Polygon>
+        );
+      })}
+    </>
+  );
+}
+
+export default function GSLMap({ data, model, grid }: { data: any; model?: any; grid?: any }) {
   const sites = data?.sites ?? {};
   const cal = model?.calibration;
   const seedLake = model?.seeding_uncertainty?.seeding_delta_af_to_lake;
   const seedStage = model?.seeding_uncertainty?.seeding_delta_stage_inches_per_year;
   const lakeCtx = model?.lake_context;
+  const cells: any[] = grid?.features ?? [];
+  const gmeta = grid?._meta;
 
   return (
     <MapContainer
-      center={[41.0, -112.3]}
+      center={[41.6, -111.9]}
       zoom={8}
       scrollWheelZoom={true}
       zoomControl={false}
       className="leaflet-container"
     >
+      <Pane name="choro" style={{ zIndex: 320 }} />
       <Pane name="radar" style={{ zIndex: 350 }} />
       <Pane name="datamarkers" style={{ zIndex: 600 }} />
       <ZoomControl position="bottomleft" />
@@ -74,6 +158,41 @@ export default function GSLMap({ data, model }: { data: any; model?: any }) {
           />
         </LayersControl.BaseLayer>
 
+        {/* ---- MODEL INPUT / OUTPUT GIS LAYERS (Bear pilot) ---- */}
+        {cells.length > 0 && (
+          <>
+            <LayersControl.Overlay checked name="① Seeding → lake hotspots">
+              <Choro features={cells} accessor={(p) => p.eff_index} ramp={RAMP_HOT}
+                     label="Hotspot index" unit="" decimals={2} normLo={0} normHi={1} />
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay name="② Seedable snow zone">
+              <Choro features={cells} accessor={(p) => p.snow_fraction} ramp={RAMP_SNOW}
+                     label="Cool-season snow" unit="" decimals={2} />
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay name="③ Runoff efficiency">
+              <Choro features={cells} accessor={(p) => p.runoff_ratio} ramp={RAMP_RUNOFF}
+                     label="Runoff ratio" unit="" decimals={3} />
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay name="④ Elevation / terrain (DEM)">
+              <Choro features={cells} accessor={(p) => p.elevation_m} ramp={RAMP_ELEV}
+                     label="Elevation" unit=" m" decimals={0} />
+            </LayersControl.Overlay>
+          </>
+        )}
+
+        <LayersControl.Overlay name="⑤ Land cover (NLCD 2021)">
+          <WMSTileLayer
+            url="https://www.mrlc.gov/geoserver/mrlc_display/wms"
+            params={{ layers: "NLCD_2021_Land_Cover_L48", format: "image/png", transparent: true } as any}
+            opacity={0.7}
+            pane="choro"
+            attribution="NLCD 2021 — MRLC / USGS"
+          />
+        </LayersControl.Overlay>
+
         <LayersControl.Overlay name="Radar — moisture / cloud potential (live NEXRAD)">
           <WMSTileLayer
             url="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi"
@@ -90,7 +209,7 @@ export default function GSLMap({ data, model }: { data: any; model?: any }) {
               <Polygon
                 key={w.short}
                 positions={BASIN_POLYS[w.short]}
-                pathOptions={{ color: BASIN_COLOR[w.short], weight: 2, fillOpacity: 0.05, opacity: 0.7 }}
+                pathOptions={{ color: BASIN_COLOR[w.short], weight: 2, fillOpacity: 0.0, opacity: 0.6, dashArray: "5 5" }}
               >
                 <Tooltip sticky className="ws-tip">
                   <b>{w.name}</b><br />
@@ -192,17 +311,22 @@ export default function GSLMap({ data, model }: { data: any; model?: any }) {
 
       <div className="map-badge">
         <span className="mb-dot" />
-        Great Salt Lake Basin · live hydrology
+        Great Salt Lake Basin · Bear River model layers
       </div>
 
       <div className="legend">
-        <div className="lg-title">Layers</div>
+        <div className="lg-title">Active layer</div>
+        <div className="li radar-li"><span className="grad" /> Hotspot index (low → high)</div>
+        {gmeta && (
+          <div className="li" style={{ fontSize: 10.5, opacity: .7, display: "block", marginTop: 4 }}>
+            {gmeta.n_cells} cells · {gmeta.elev_min_m}–{gmeta.elev_max_m} m · Σ {fmt(gmeta.af_to_lake_total, 0)} AF/yr → lake
+          </div>
+        )}
+        <div className="lg-title" style={{ marginTop: 10 }}>Reference</div>
         <div className="li"><span className="sw" style={{ background: COLORS.lake_stage }} /> Lake-stage gauge</div>
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_major }} /> Major inflow</div>
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_minor }} /> Minor inflow</div>
-        <div className="li"><span className="sq" style={{ borderColor: "#1c7ed6" }} /> Watershed</div>
         {model && <div className="li"><span className="sw" style={{ background: MODEL_COLOR }} /> GSL-SWY+ model</div>}
-        <div className="li radar-li"><span className="grad" /> Radar reflectivity</div>
       </div>
     </MapContainer>
   );

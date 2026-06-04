@@ -3,7 +3,7 @@
     "model": "GSL-SWY+ v1",
     "pilot": "Bear River",
     "outlet_gauge": "10126000",
-    "generated_utc": "2026-06-03T23:27:46.661497Z",
+    "generated_utc": "2026-06-04T04:59:46.258553Z",
     "gauge_years": 68,
     "note": "Snow-aware monthly water balance calibrated to the Bear River outlet gauge. Seeding effect is the paired-run difference; uncertainty is Monte Carlo over uncertain physical parameters."
   },

@@ -23,6 +23,7 @@ from gsl_swy.engine import Params
 from gsl_swy.calibrate import calibrate, simulate, nash_sutcliffe, percent_bias
 from gsl_swy.seeding import run_paired, lake_acres_at_stage
 from gsl_swy.montecarlo import run_montecarlo
+from gsl_swy.spatial import build_spatial_grid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -159,6 +160,18 @@ def main():
         with open(os.path.join(d, "bear_basin_model.geojson"), "w") as fh:
             json.dump(geojson, fh, indent=2)
     print(f"[write] model_outputs.json + bear_basin_model.geojson -> {PUBLIC}")
+
+    print("[spatial] building per-cell seeding-to-lake efficiency surface ...")
+    grid = build_spatial_grid(cfg, pr_cal, to_lake_p50)
+    gm = grid["_meta"]
+    print(f"[spatial] {gm['n_cells']} in-basin cells  elev {gm['elev_min_m']}-{gm['elev_max_m']} m  "
+          f"runoff ratio {gm['runoff_ratio_range']}  snow frac {gm['snow_fraction_range']}  "
+          f"af-to-lake total={gm['af_to_lake_total']:,.1f}")
+    for d in (PUBLIC, OUT):
+        with open(os.path.join(d, "bear_seeding_grid.geojson"), "w") as fh:
+            json.dump(grid, fh)
+    print(f"[write] bear_seeding_grid.geojson -> {PUBLIC}")
+
     print(f"[done] seeding to lake (p50)={to_lake_p50:,.0f} AF/yr  "
           f"stage p50={mc['seeding_delta_stage_inches_per_year']['p50']:.3f} in/yr")
 
