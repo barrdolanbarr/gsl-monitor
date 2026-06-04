@@ -123,6 +123,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
       className="leaflet-container"
     >
       <Pane name="choro" style={{ zIndex: 320 }} />
+      <Pane name="water" style={{ zIndex: 340 }} />
       <Pane name="radar" style={{ zIndex: 350 }} />
       <Pane name="datamarkers" style={{ zIndex: 600 }} />
       <ZoomControl position="bottomleft" />
@@ -182,6 +183,15 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
             </LayersControl.Overlay>
           </>
         )}
+
+        <LayersControl.Overlay checked name="Water — lakes & rivers (USGS NHD)">
+          <TileLayer
+            url="https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer/tile/{z}/{y}/{x}"
+            pane="water"
+            opacity={0.9}
+            attribution="Hydrography: USGS National Hydrography Dataset (The National Map)"
+          />
+        </LayersControl.Overlay>
 
         <LayersControl.Overlay name="⑤ Land cover (NLCD 2021)">
           <WMSTileLayer
@@ -323,6 +333,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
           </div>
         )}
         <div className="lg-title" style={{ marginTop: 10 }}>Reference</div>
+        <div className="li"><span className="sw" style={{ background: "#3a7bd5" }} /> Water — lakes & rivers</div>
         <div className="li"><span className="sw" style={{ background: COLORS.lake_stage }} /> Lake-stage gauge</div>
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_major }} /> Major inflow</div>
         <div className="li"><span className="sw" style={{ background: COLORS.inflow_minor }} /> Minor inflow</div>
