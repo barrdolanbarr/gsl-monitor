@@ -1,5 +1,5 @@
 "use client";
-import { MapContainer, TileLayer, CircleMarker, Popup, Polygon, Tooltip, LayersControl, WMSTileLayer, Pane, ZoomControl } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Popup, Polygon, Tooltip, LayersControl, WMSTileLayer, Pane, ZoomControl, LayerGroup } from "react-leaflet";
 import { STATIONS, WATERSHEDS, Station } from "@/lib/data";
 import SeriesChart from "./SeriesChart";
 
@@ -78,7 +78,7 @@ function Choro({
   const lo = normLo ?? Math.min(...vals);
   const hi = normHi ?? Math.max(...vals);
   return (
-    <>
+    <LayerGroup>
       {features.map((f, i) => {
         const v = accessor(f.properties);
         const t = hi > lo ? (v - lo) / (hi - lo) : 0;
@@ -101,7 +101,7 @@ function Choro({
           </Polygon>
         );
       })}
-    </>
+    </LayerGroup>
   );
 }
 
@@ -130,7 +130,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
 
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Terrain (soft)">
-          <>
+          <LayerGroup>
             <TileLayer
               attribution='&copy; OpenStreetMap, &copy; CARTO'
               url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
@@ -142,7 +142,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png"
             />
-          </>
+          </LayerGroup>
         </LayersControl.BaseLayer>
 
         <LayersControl.BaseLayer name="Topographic (USGS)">
@@ -214,7 +214,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
         </LayersControl.Overlay>
 
         <LayersControl.Overlay checked name="Watershed catchments">
-          <>
+          <LayerGroup>
             {WATERSHEDS.map((w) => (
               <Polygon
                 key={w.short}
@@ -228,7 +228,7 @@ export default function GSLMap({ data, model, grid }: { data: any; model?: any; 
                 </Tooltip>
               </Polygon>
             ))}
-          </>
+          </LayerGroup>
         </LayersControl.Overlay>
 
         {model && (
