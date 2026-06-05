@@ -149,3 +149,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .popup .small{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}
 .popup .tag{align-self:flex-start;font-size:9.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:5px}
 .ws-tip{font-size:12px;border-radius:10px!important;border:1px solid var(--line)!important;box-shadow:var(--shadow)!important}
+
+/* ============ methods (collapsible) ============ */
+.methods{padding:0}
+.methods>summary{
+  list-style:none;cursor:pointer;padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  user-select:none;
+}
+.methods>summary::-webkit-details-marker{display:none}
+.methods>summary h2{margin-bottom:0}
+.methods>summary:hover h2{color:var(--ink)}
+.methods .chev{font-family:var(--mono);color:var(--muted);font-size:16px;transition:transform .2s;line-height:1}
+.methods[open]>summary .chev{transform:rotate(90deg)}
+.methods-body{padding:0 20px 18px}
+.methods .steps{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:12px}
+.methods .steps li{
+  position:relative;padding-left:30px;font-size:12px;line-height:1.55;color:var(--ink);
+}
+.methods .steps li::before{
+  counter-increment:step;content:counter(step);
+  position:absolute;left:0;top:0;
+  width:20px;height:20px;border-radius:50%;
+  background:#f7faf8;border:1px solid var(--line);color:var(--accent);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.methods .steps b{font-weight:700}
+.methods .steps .mono{font-family:var(--mono);font-size:11px;background:#f3f6f3;border-radius:4px;padding:1px 4px}
+.methods .methods-body .note{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}

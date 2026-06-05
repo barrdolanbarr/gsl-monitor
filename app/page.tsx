@@ -193,6 +193,39 @@ export default function Page() {
           </div>
         )}
 
+        {/* METHODS */}
+        <details className="section methods">
+          <summary>
+            <h2>Methods — how the numbers are computed</h2>
+            <span className="chev" aria-hidden>›</span>
+          </summary>
+          <div className="methods-body">
+            <ol className="steps">
+              <li>
+                <b>Water-balance engine.</b> The basin is split into 6 elevation bands (1,550–3,100 m) and run month-by-month, spun up to a repeating steady state. Each band-month: precipitation splits into rain vs. snow by temperature → snowpack accumulates and melts on a degree-day factor → meltwater + rain enter a soil bucket (150 mm capacity) → evapotranspiration is removed → the excess splits into fast quickflow (25%) and slow groundwater recharge. <b>Outlet flow = quickflow + baseflow.</b>
+              </li>
+              <li>
+                <b>Calibration.</b> Parameters are tuned to {model?.meta?.gauge_years ?? 68} years of the USGS outlet gauge ({model?.meta?.outlet_gauge ?? "10126000"}, Bear River near Corinne): Nash–Sutcliffe {fmt(mCal?.nash_sutcliffe, 2)}, annual-volume bias {fmt(mCal?.percent_bias, 1)}%. Volume is fit closely; the monthly hydrograph shape is rougher (it runs high in late summer).
+              </li>
+              <li>
+                <b>Runoff efficiency (the map).</b> The same calibrated engine is re-run cell-by-cell over a real DEM. For each cell, <span className="mono">runoff_ratio = annual&nbsp;runoff ÷ annual&nbsp;precipitation</span> — the fraction of precip that leaves as streamflow instead of evaporating. Cold high cells shed most of it (high); hot, high-evaporation valleys keep little (low).
+              </li>
+              <li>
+                <b>Hotspot score.</b> <span className="mono">snow_fraction × runoff_ratio × rel_delivery</span> — i.e. cold enough to make snow, efficient at converting it to runoff, and high enough that the water reaches the trunk river instead of valley diversions (delivery ramps 0.35 → 1.0 from valley floor to ≥2,000 m).
+              </li>
+              <li>
+                <b>Seeding yield.</b> The published 3–10% seeding effect applies only to targeted storms over targeted areas, so it&apos;s scaled by a ~3% treatable fraction to a realized basin-wide bump. A paired baseline-vs-seeded run gives ≈{fmt(model?.seeding_central?.delta_af_at_outlet)} AF/yr at the outlet → ×{SEEDING_CONTEXT.deliveryFactorToLake} delivery → ≈{fmt(model?.seeding_central?.delta_af_to_lake)} AF/yr to the lake. A {model?.seeding_uncertainty?.n_draws ?? 400}-draw Monte Carlo over the uncertain parameters gives the p50 ≈ {fmt(mSeedLake?.p50)} AF/yr and the 90% range.
+              </li>
+              <li>
+                <b>Honesty check.</b> ≈{fmt(mSeedLake?.p50)} AF/yr against an {fmt(mLake?.structural_shortfall_af / 1000)}K AF structural shortfall is ~{fmt(mLake?.years_of_seeding_to_offset_structural_shortfall)} years to close — seeding can&apos;t refill the lake. The per-cell map distributes that validated yield by score; it shows <em>where</em> the water originates, not extra water.
+              </li>
+            </ol>
+            <div className="note">
+              The ~3% treatable fraction is the key assumption — yield scales linearly with it, and it&apos;s set to land the physical pathway inside the operationally-validated envelope rather than derived from first principles. Vibe-coded side project; figures are illustrative, not Rainmaker company numbers.
+            </div>
+          </div>
+        </details>
+
         <div className="foot">
           Data: USGS National Water Information System (waterservices.usgs.gov), public/no-key. Elevation: open-elevation (SRTM/ASTER). Land cover: NLCD 2021 (MRLC/USGS). Lake facts: USU GSL Strike Team, UT DNR, Grow the Flow. Seeding context: bottom-up estimate from Rainmaker disclosed validation — illustrative, not company figures.
         </div>
