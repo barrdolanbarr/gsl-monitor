@@ -178,3 +178,49 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .methods .steps b{font-weight:700}
 .methods .steps .mono{font-family:var(--mono);font-size:11px;background:#f3f6f3;border-radius:4px;padding:1px 4px}
 .methods .methods-body .note{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+
+/* scenario explorer */
+.scen-slider{margin-bottom:10px}
+.scen-slider-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.scen-slider-head span{color:var(--muted)}
+.scen-slider-head b{font-family:var(--mono);font-size:11.5px}
+.scen-slider input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:var(--line);outline:none;cursor:pointer}
+.scen-slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent2);border:2px solid #fff;box-shadow:0 1px 3px rgba(20,40,30,.25)}
+.scen-slider input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent2);border:2px solid #fff;box-shadow:0 1px 3px rgba(20,40,30,.25)}
+.scen-chart{margin:12px 0 12px}
+
+/* ============ economic explorer — follow the water ============ */
+.econ .econ-head{margin:12px 0 4px}
+.econ-presets{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.econ-presets button{
+  font-family:var(--mono);font-size:10.5px;padding:4px 9px;border-radius:6px;
+  border:1px solid var(--line);background:#f7faf8;color:var(--muted);cursor:pointer;
+  transition:all .15s ease;
+}
+.econ-presets button:hover{border-color:var(--accent2);color:var(--accent2)}
+.econ-presets button.on{background:var(--accent2);border-color:var(--accent2);color:#fff}
+
+.econ-block{margin-top:16px}
+.econ-block-title{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px;
+}
+.econ-stack{display:flex;width:100%;height:24px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.econ-seg{height:100%;transition:opacity .15s ease;cursor:default}
+.econ-seg:hover{opacity:.82}
+.econ-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:7px}
+.econ-li{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.econ-li i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+.econ-toggle{display:inline-flex;gap:4px}
+.econ-toggle button{
+  font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:6px;
+  border:1px solid var(--line);background:#f7faf8;color:var(--muted);cursor:pointer;
+}
+.econ-toggle button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.econ-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0}
+.econ-bar-label{flex:0 0 132px;font-size:11.5px;color:var(--ink);line-height:1.25}
+.econ-bar-track{flex:1;height:14px;background:#f0f4f1;border-radius:4px;overflow:hidden}
+.econ-bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .25s ease}
+.econ-bar-val{flex:0 0 64px;text-align:right;font-family:var(--mono);font-size:11.5px;font-weight:600}

@@ -3,7 +3,7 @@
     "model": "GSL-SWY+ v1",
     "pilot": "Bear River",
     "outlet_gauge": "10126000",
-    "generated_utc": "2026-06-04T04:59:46.258553Z",
+    "generated_utc": "2026-06-19T00:35:30.897592Z",
     "gauge_years": 68,
     "note": "Snow-aware monthly water balance calibrated to the Bear River outlet gauge. Seeding effect is the paired-run difference; uncertainty is Monte Carlo over uncertain physical parameters."
   },
@@ -105,36 +105,36 @@
     "delta_stage_inches_per_year": 0.0237
   },
   "seeding_uncertainty": {
-    "n_draws": 400,
+    "n_draws": 60,
     "seeded_increment_pct": {
-      "p05": 4.090086439196644,
-      "p50": 6.314847119462144,
-      "mean": 6.36626607989485,
-      "p95": 8.864590377838516
+      "p05": 4.080892765600757,
+      "p50": 5.937615959296293,
+      "mean": 6.213660265806352,
+      "p95": 8.770662824982288
     },
     "baseline_annual_af": {
-      "p05": 798333.9051561357,
-      "p50": 1123358.563379352,
-      "mean": 1163447.6077403792,
-      "p95": 1667541.2509029608
+      "p05": 756517.4433569922,
+      "p50": 1174403.5966632478,
+      "mean": 1177388.9275606477,
+      "p95": 1638381.1630680463
     },
     "seeding_delta_af_at_outlet": {
-      "p05": 3020.388408588356,
-      "p50": 4817.567299231421,
-      "mean": 4899.587898570953,
-      "p95": 6883.0340068669275
+      "p05": 2966.104762709269,
+      "p50": 4561.916281822429,
+      "mean": 4789.294392697773,
+      "p95": 7174.420024370181
     },
     "seeding_delta_af_to_lake": {
-      "p05": 755.097102147089,
-      "p50": 1204.3918248078553,
-      "mean": 1224.8969746427383,
-      "p95": 1720.7585017167319
+      "p05": 741.5261906773172,
+      "p50": 1140.4790704556071,
+      "mean": 1197.3235981744433,
+      "p95": 1793.6050060925452
     },
     "seeding_delta_stage_inches_per_year": {
-      "p05": 0.015309332466757962,
-      "p50": 0.02441862750340294,
-      "mean": 0.024834362321097637,
-      "p95": 0.03488778320413967
+      "p05": 0.01503418693252546,
+      "p50": 0.023122818524051035,
+      "mean": 0.024275321654163674,
+      "p95": 0.03636472087395637
     }
   },
   "lake_context": {
@@ -142,8 +142,8 @@
     "healthy_stage_ft": 4198,
     "surface_acres_at_stage": 591872,
     "structural_shortfall_af": 800000,
-    "seeding_to_lake_p50_af": 1204,
-    "years_of_seeding_to_offset_structural_shortfall": 664,
+    "seeding_to_lake_p50_af": 1140,
+    "years_of_seeding_to_offset_structural_shortfall": 701,
     "honesty_note": "At the median modeled effect, a full year of cloud seeding offsets well under 1% of the lake's structural water deficit -- it would take centuries of seeding to close it. The physical seeding pathway is anchored to the operationally-validated yield envelope (a 3-10% effect in targeted storms/areas scaled by the treatable fraction of basin precip), so this is ~2-3 orders of magnitude too small to refill the lake. Defensible value is in agriculture/ski pathways, not lake replenishment."
   }
 }

@@ -1,0 +1,40 @@
+{
+  "_about": "Economic-layer config for the Bear River pilot. Routes one acre-foot of NEW water generated in the basin down the hydrologic cascade and attaches a marginal economic value ($/AF) at every place the water is used. Two value types: (1) CONSUMPTIVE nodes are rival — an acre-foot either grows a crop or flows on, never both — so their fractions sum to 1.0 (losses included) and there is no double-counting; (2) PASS-THROUGH nodes (hydropower, in-river recreation) are non-rival uses of water moving through the river, valued on throughflow without removing it; (3) LAKE-TERMINAL benefits are joint products of the same acre-foot that reaches the Great Salt Lake (the stock supports shrimp AND minerals AND dust suppression simultaneously), so they are summed per AF-to-lake, NOT partitioned. ALL dollar values are editable marginal/avoided-cost anchors from public sources (see economic-layer-plan.md) — illustrative, not Rainmaker company figures.",
+
+  "basin": {
+    "name": "Bear River",
+    "drainage_area_sqmi": 7500,
+    "acres_per_sqmi": 640,
+    "_inch_note": "1 inch of water over the whole basin = area_acres / 12 acre-feet."
+  },
+
+  "partition_note": "Default split leans toward runoff vs. a basin-average analog (~35% ET / 30% recharge / 30% runoff / 5% interception) because seeded water is high-elevation cool-season snow with a high runoff ratio. Total water reaching the lake (to_lake + baseflow return) = 0.27, consistent with the lumped model's 0.25 delivery factor. Every fraction is calibratable.",
+
+  "consumptive_partition": [
+    {"id": "interception_evap", "label": "Interception & evaporation", "frac": 0.05, "path": "interception", "value_per_af": 0, "beneficiary": "Loss (no value)", "loss": true},
+    {"id": "agriculture_et",    "label": "Crop transpiration (ET)",    "frac": 0.22, "path": "soil",        "value_per_af": 750, "beneficiary": "Agriculture", "value_basis": "USU GSL-basin ag water conservation cost $688-806/AF; alfalfa 3-5 AF/acre"},
+    {"id": "ranching_forage",   "label": "Rangeland forage",           "frac": 0.06, "path": "soil",        "value_per_af": 300, "beneficiary": "Ranching", "value_basis": "AUM forage value proxy"},
+    {"id": "wildfire_resilience","label": "Soil & fuel moisture",      "frac": 0.05, "path": "soil",        "value_per_af": 200, "beneficiary": "Wildfire resilience", "value_basis": "Avoided suppression+loss; up to ~$505/acre fuel-treatment break-even (Hunter & Taylor)"},
+    {"id": "natural_vegetation","label": "Natural vegetation ET",      "frac": 0.07, "path": "soil",        "value_per_af": 0,   "beneficiary": "Ecosystem (unpriced)"},
+    {"id": "wells_mi",          "label": "Groundwater pumping (M&I/irrig)", "frac": 0.10, "path": "groundwater", "value_per_af": 400, "beneficiary": "Municipal & Industrial", "value_basis": "Avoided next-cheapest supply / water-rights market"},
+    {"id": "groundwater_baseflow","label": "Baseflow return to river", "frac": 0.10, "path": "groundwater", "value_per_af": 0,   "beneficiary": "Return flow → lake", "fate": "to_lake"},
+    {"id": "ag_diversion",      "label": "Surface irrigation diversion","frac": 0.08, "path": "surface",     "value_per_af": 600, "beneficiary": "Agriculture", "value_basis": "Bear River Canal ~230K AF/yr serves 150K+ acres"},
+    {"id": "mi_diversion",      "label": "Surface M&I diversion",      "frac": 0.04, "path": "surface",     "value_per_af": 500, "beneficiary": "Municipal & Industrial"},
+    {"id": "wetlands_refuge",   "label": "Wetlands / Bird Refuge",     "frac": 0.06, "path": "surface",     "value_per_af": 150, "beneficiary": "Wetlands & waterfowl", "value_basis": "Bear River Migratory Bird Refuge, 8M birds; part is evaporative"},
+    {"id": "to_lake",           "label": "Reaches Great Salt Lake",    "frac": 0.17, "path": "surface",     "value_per_af": 0,   "beneficiary": "Great Salt Lake", "fate": "to_lake"}
+  ],
+
+  "passthrough": [
+    {"id": "hydropower",          "label": "Hydropower (4 PacifiCorp dams)", "applies_to": "surface", "value_per_af": 12, "beneficiary": "Hydropower", "value_basis": "~77 MW Soda/Grace/Cove/Oneida; run-of-river, non-consumptive"},
+    {"id": "instream_recreation", "label": "In-river fishing & boating",     "applies_to": "surface", "value_per_af": 45, "beneficiary": "Recreation & fisheries", "value_basis": "Angler-day spend / instream-flow WTP"}
+  ],
+
+  "lake_terminal": [
+    {"id": "dust_health",       "label": "Dust / public-health avoided cost", "value_per_af": 80, "beneficiary": "Dust / public health", "value_basis": "Exposed-lakebed PM2.5/arsenic; Owens Lake analog; GSL lakebed = 23-34% Wasatch dust"},
+    {"id": "lake_ecosystem",    "label": "Brine shrimp, minerals, birds",     "value_per_af": 40, "beneficiary": "Lake ecosystem & industry", "value_basis": "Minerals $1.13B/5,368 jobs; brine shrimp $67M; GSL aggregate ~$2.5B/yr"},
+    {"id": "lake_effect_snow",  "label": "Lake-effect snow / ski",            "value_per_af": 30, "beneficiary": "Lake-effect snow / ski", "value_basis": "Lake adds 5-10% of UT snow, +5-7 ski weeks; ski $1.2B/20K jobs"},
+    {"id": "lake_recreation",   "label": "Lake recreation & birding",         "value_per_af": 15, "beneficiary": "Lake recreation"}
+  ],
+
+  "lake_terminal_note": "These are MARGINAL, illustrative per-AF avoided-cost/value anchors for water that actually reaches the lake. They are deliberately modest: seeding's contribution to lake LEVEL is 2-3 orders of magnitude below the structural shortfall (see the lumped model), so the defensible headline value sits upstream (agriculture, supply, wildfire), not in 'refilling the lake'."
+}

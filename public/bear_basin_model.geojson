@@ -18,10 +18,10 @@
         "percent_bias": 1.4,
         "modeled_yield_af": 1151577,
         "observed_yield_af": 1142962,
-        "seeding_delta_af_to_lake_p50": 1204,
-        "seeding_delta_stage_in_p50": 0.0244,
-        "seeding_delta_stage_in_p05": 0.0153,
-        "seeding_delta_stage_in_p95": 0.0349
+        "seeding_delta_af_to_lake_p50": 1140,
+        "seeding_delta_stage_in_p50": 0.0231,
+        "seeding_delta_stage_in_p05": 0.015,
+        "seeding_delta_stage_in_p95": 0.0364
       }
     }
   ]

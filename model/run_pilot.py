@@ -24,6 +24,7 @@ from gsl_swy.calibrate import calibrate, simulate, nash_sutcliffe, percent_bias
 from gsl_swy.seeding import run_paired, lake_acres_at_stage
 from gsl_swy.montecarlo import run_montecarlo
 from gsl_swy.spatial import build_spatial_grid
+from gsl_swy.economics import compute_economics, scale_to_quantity
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -171,6 +172,45 @@ def main():
         with open(os.path.join(d, "bear_seeding_grid.geojson"), "w") as fh:
             json.dump(grid, fh)
     print(f"[write] bear_seeding_grid.geojson -> {PUBLIC}")
+
+    print("[economics] routing generated water through the cascade to economic value ...")
+    econ = compute_economics()
+    # The realized full-deployment seeding yield at the outlet (what is actually generated
+    # in the basin), used as the default "water generated" anchor for the economic layer.
+    seeding_generated_af = round(seed_central.delta_af)
+    econ_payload = {
+        "meta": {
+            "model": "GSL-SWY+ economic layer v1",
+            "pilot": cfg.raw["pilot"]["name"],
+            "generated_utc": dt.datetime.utcnow().isoformat() + "Z",
+            "note": ("Per-acre-foot economic decomposition of new water generated in the basin. "
+                     "Multiply *_per_af fields by any 'water generated' quantity for basin totals. "
+                     "Consumptive fractions sum to 1.0 (no double-counting); lake-terminal benefits "
+                     "are joint products on to-lake water; pass-through uses do not consume water. "
+                     "Dollar anchors are illustrative marginal/avoided-cost values, not company figures."),
+        },
+        "economics": econ,
+        "anchors": {
+            "seeding_generated_af": seeding_generated_af,
+            "seeding_to_lake_p50_af": round(to_lake_p50),
+            "acre_feet_per_inch": econ["basin"]["acre_feet_per_inch"],
+            "example_seeding": scale_to_quantity(econ, seeding_generated_af),
+            "example_one_inch": scale_to_quantity(econ, econ["basin"]["acre_feet_per_inch"]),
+        },
+    }
+    for d in (PUBLIC, OUT):
+        with open(os.path.join(d, "economic_outputs.json"), "w") as fh:
+            json.dump(econ_payload, fh, indent=2)
+    print(f"[economics] ${econ['per_af']['total_usd']:.2f}/AF total "
+          f"(consumptive ${econ['per_af']['consumptive_usd']:.2f} + "
+          f"passthrough ${econ['per_af']['passthrough_usd']:.2f} + "
+          f"lake ${econ['per_af']['lake_terminal_usd']:.2f}); "
+          f"to-lake frac {econ['fractions']['to_lake']:.3f}")
+    print(f"[economics] seeding {seeding_generated_af:,.0f} AF generated -> "
+          f"${econ_payload['anchors']['example_seeding']['total_usd']:,.0f}; "
+          f"1 inch ({econ['basin']['acre_feet_per_inch']:,.0f} AF) -> "
+          f"${econ_payload['anchors']['example_one_inch']['total_usd']:,.0f}")
+    print(f"[write] economic_outputs.json -> {PUBLIC}")
 
     print(f"[done] seeding to lake (p50)={to_lake_p50:,.0f} AF/yr  "
           f"stage p50={mc['seeding_delta_stage_inches_per_year']['p50']:.3f} in/yr")

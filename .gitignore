@@ -9,3 +9,6 @@ next-env.d.ts
 __pycache__/
 *.pyc
 tsconfig.tsbuildinfo
+
+# local-only, do not publish
+private/

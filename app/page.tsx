@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { STATIONS, WATERSHEDS, LAKE_FACTS, SEEDING_CONTEXT } from "@/lib/data";
 
 const GSLMap = dynamic(() => import("./components/GSLMap"), { ssr: false, loading: () => <div className="loading">loading map…</div> });
+const ScenarioExplorer = dynamic(() => import("./components/ScenarioExplorer"), { ssr: false });
+const EconomicExplorer = dynamic(() => import("./components/EconomicExplorer"), { ssr: false });
 
 function fmt(n: any, d = 0) {
   if (n === undefined || n === null || isNaN(n)) return "—";
@@ -14,6 +16,7 @@ export default function Page() {
   const [data, setData] = useState<any>(null);
   const [model, setModel] = useState<any>(null);
   const [grid, setGrid] = useState<any>(null);
+  const [econ, setEcon] = useState<any>(null);
   const [updated, setUpdated] = useState<string>("");
 
   async function load() {
@@ -35,6 +38,11 @@ export default function Page() {
     fetch("/bear_seeding_grid.geojson", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((g) => setGrid(g))
+      .catch(() => {});
+    // Economic layer (per-AF decomposition + anchors), precomputed in public/
+    fetch("/economic_outputs.json", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((e) => setEcon(e))
       .catch(() => {});
     const t = setInterval(load, 5 * 60 * 1000); // refresh every 5 min
     return () => clearInterval(t);
@@ -158,6 +166,12 @@ export default function Page() {
             Even at full deployment, seeding adds far less than 1% of the yearly shortfall — too little to refill the lake. Its real value is water for farms and ski areas.
           </div>
         </div>
+
+        {/* SCENARIO EXPLORER */}
+        <ScenarioExplorer currentStageFt={lakeElev} seedP50={mSeedLake?.p50} />
+
+        {/* ECONOMIC LAYER — FOLLOW THE WATER */}
+        <EconomicExplorer seedingGeneratedAF={econ?.anchors?.seeding_generated_af} />
 
         {/* GSL-SWY+ MODEL RESULTS */}
         {model && (
