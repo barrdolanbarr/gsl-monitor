@@ -1,0 +1,432 @@
+{
+  "meta": {
+    "model": "Bear River inch-value model (reconciled, 80/20 snow/rain)",
+    "n_draws": 200000,
+    "seed": 42,
+    "note": "Every dollar reproduces rainmaker-followup/bear_inch_master.py exactly. Multiply any *_per_genAF field by a 'water generated' quantity (AF) to rescale. Unit values are sourced marginal/avoided-cost anchors, illustrative \u2014 not company figures."
+  },
+  "basin": {
+    "drainage_area_sqmi": 7500,
+    "area_acres": 4800000,
+    "acre_feet_per_inch": 400000.0,
+    "snow_frac": 0.8,
+    "gross_snow_af": 320000.0,
+    "gross_rain_af": 79999.99999999999,
+    "runoff_snow": "0.30 / 0.40 / 0.50",
+    "runoff_rain": "0.05 / 0.15 / 0.30",
+    "blended_runoff_p50": 0.353,
+    "streamflow_af_per_inch": 141294,
+    "streamflow_af_per_genAF": 0.353234503824695
+  },
+  "partition": [
+    {
+      "fate": "Diverted to farms + cities",
+      "af": 83269,
+      "path": "surface",
+      "value": "direct use"
+    },
+    {
+      "fate": "Stays in-channel (toward the GSL)",
+      "af": 57093,
+      "path": "surface",
+      "value": "hydro + fish/recreation"
+    },
+    {
+      "fate": "Soaks into plants (rangeland/meadow)",
+      "af": 106910,
+      "path": "soil",
+      "value": "forage + carbon"
+    },
+    {
+      "fate": "Recharges soil & groundwater",
+      "af": 57388,
+      "path": "groundwater",
+      "value": "recharge + wildfire"
+    },
+    {
+      "fate": "Sublimates off the snow \u2014 lost",
+      "af": 93357,
+      "path": "loss",
+      "value": "nobody"
+    }
+  ],
+  "benefits": [
+    {
+      "slug": "irrigation",
+      "label": "Irrigation water",
+      "short": "Irrigation",
+      "layer": "Direct use",
+      "beneficiary": "Agriculture",
+      "confidence": "HIGH",
+      "color": "#1f6f8b",
+      "y_af_per_inch": 70183,
+      "y_af_per_genAF": 0.17545698758545528,
+      "usd_per_inch": [
+        3268348,
+        5044541,
+        7271200
+      ],
+      "usd_per_genAF": {
+        "p10": 8.17087,
+        "p50": 12.6113525,
+        "p90": 18.178
+      },
+      "unit_value": {
+        "lo": 30,
+        "p50": 70,
+        "hi": 120,
+        "unit": "$/AF net to water"
+      },
+      "mechanism": "New streamflow is diverted to alfalfa/hay. Forage is the lowest-value use per acre-foot in the basin \u2014 the central irony of the Bear.",
+      "relationship": "Each diverted acre-foot of irrigation water is worth its net return to the water itself.",
+      "source": "University of Nevada Reno Extension / Arizona Farm Bureau \u2014 alfalfa water use & net value per AF."
+    },
+    {
+      "slug": "municipal",
+      "label": "Municipal & industrial supply",
+      "short": "M&I supply",
+      "layer": "Direct use",
+      "beneficiary": "Municipal & Industrial",
+      "confidence": "HIGH",
+      "color": "#155e75",
+      "y_af_per_inch": 12709,
+      "y_af_per_genAF": 0.031773305864225686,
+      "usd_per_inch": [
+        2501518,
+        5759523,
+        9915415
+      ],
+      "usd_per_genAF": {
+        "p10": 6.253795,
+        "p50": 14.3988075,
+        "p90": 24.7885375
+      },
+      "unit_value": {
+        "lo": 350,
+        "p50": 420,
+        "hi": 600,
+        "unit": "$/AF"
+      },
+      "mechanism": "A small share of new streamflow is captured for cities and industry \u2014 small in volume, highest in value per acre-foot.",
+      "relationship": "Each acre-foot of municipal supply is valued at the price Utah is already prepared to pay for it.",
+      "source": "Bear River Development project \u2014 220,000 AF/yr at a quoted ~$365\u2013400/AF ($1.5\u20132.8B capital)."
+    },
+    {
+      "slug": "hydropower",
+      "label": "Hydropower",
+      "short": "Hydropower",
+      "layer": "Direct use",
+      "beneficiary": "Hydropower",
+      "confidence": "HIGH",
+      "color": "#c0612e",
+      "y_af_per_inch": 141294,
+      "y_af_per_genAF": 0.353234503824695,
+      "usd_per_inch": [
+        549178,
+        741278,
+        977784
+      ],
+      "usd_per_genAF": {
+        "p10": 1.372945,
+        "p50": 1.853195,
+        "p90": 2.44446
+      },
+      "unit_value": {
+        "lo": 3,
+        "p50": 5,
+        "hi": 8,
+        "unit": "$/AF passthrough"
+      },
+      "mechanism": "Water is non-consumptive here \u2014 every acre-foot in the river generates as it passes the PacifiCorp dam cascade (Soda, Grace, Oneida, Cutler) on its way down.",
+      "relationship": "Every acre-foot of streamflow earns run-of-river generation as it passes the cascade.",
+      "source": "PacifiCorp Bear River hydroelectric cascade; ~130 kWh/AF \u00d7 wholesale price."
+    },
+    {
+      "slug": "instream",
+      "label": "Fish & recreation (water left in the river)",
+      "short": "Fish & recreation",
+      "layer": "Ecological",
+      "beneficiary": "Recreation & fisheries",
+      "confidence": "MED-LOW",
+      "color": "#2ca58d",
+      "y_af_per_inch": 57093,
+      "y_af_per_genAF": 0.14273321160853228,
+      "usd_per_inch": [
+        4503490,
+        8250202,
+        13908643
+      ],
+      "usd_per_genAF": {
+        "p10": 11.258725,
+        "p50": 20.625505,
+        "p90": 34.7716075
+      },
+      "unit_value": {
+        "lo": 40,
+        "p50": 120,
+        "hi": 300,
+        "unit": "$/AF/yr"
+      },
+      "mechanism": "The water NOT diverted stays in the channel. A fishing day is a genuinely different product from a kilowatt-hour, so recreation can stack on hydropower for this water \u2014 but never on water already sent to farms and cities.",
+      "relationship": "Each acre-foot left in the channel supports angling and recreation value.",
+      "source": "WestWater Research / western water markets (instream leases $115\u2013350/AF); UF/IFAS recreation surplus ~$95/day."
+    },
+    {
+      "slug": "recharge",
+      "label": "Groundwater recharge",
+      "short": "Recharge",
+      "layer": "Ecological",
+      "beneficiary": "Groundwater",
+      "confidence": "MEDIUM",
+      "color": "#b88a1e",
+      "y_af_per_inch": 57388,
+      "y_af_per_genAF": 0.14347022349105285,
+      "usd_per_inch": [
+        3036821,
+        6214053,
+        11231340
+      ],
+      "usd_per_genAF": {
+        "p10": 7.5920525,
+        "p50": 15.5351325,
+        "p90": 28.07835
+      },
+      "unit_value": {
+        "lo": 20,
+        "p50": 80,
+        "hi": 250,
+        "unit": "$/AF"
+      },
+      "mechanism": "Deep percolation that reaches usable aquifer storage offsets future pumping. Diffuse basin-wide percolation is mostly not recoverable, so the literature value is discounted hard.",
+      "relationship": "Each acre-foot of recharge offsets future pumping at an avoided-cost value.",
+      "source": "Managed-aquifer-recharge literature ($90\u20131,100/AF, median ~$390), discounted to $20\u2013250/AF here."
+    },
+    {
+      "slug": "forage",
+      "label": "Rangeland forage green-up",
+      "short": "Forage",
+      "layer": "Ecological",
+      "beneficiary": "Ranching",
+      "confidence": "MED-LOW",
+      "color": "#0f7b54",
+      "y_af_per_inch": 106910,
+      "y_af_per_genAF": 0.2672742665639308,
+      "usd_per_inch": [
+        1510527,
+        2497641,
+        3869592
+      ],
+      "usd_per_genAF": {
+        "p10": 3.7763175,
+        "p50": 6.2441025,
+        "p90": 9.67398
+      },
+      "unit_value": {
+        "lo": 8,
+        "p50": 20,
+        "hi": 45,
+        "unit": "$/AF"
+      },
+      "mechanism": "Growing-season soil moisture drives forage on dryland range. Real and broad, but the marginal value of water on dryland range is far below irrigated hay.",
+      "relationship": "Each acre-foot of growing-season soil moisture adds dryland forage value.",
+      "source": "USU/Extension rangeland productivity; 1 AUM \u2248 780 lbs dry forage."
+    },
+    {
+      "slug": "wildfire",
+      "label": "Wildfire risk reduction",
+      "short": "Wildfire",
+      "layer": "Ecological",
+      "beneficiary": "Wildfire resilience",
+      "confidence": "LOW",
+      "color": "#a8431e",
+      "y_af_per_inch": 164735,
+      "y_af_per_genAF": 0.4118377011814695,
+      "usd_per_inch": [
+        927726,
+        1809225,
+        3111238
+      ],
+      "usd_per_genAF": {
+        "p10": 2.319315,
+        "p50": 4.5230625,
+        "p90": 7.778095
+      },
+      "unit_value": {
+        "lo": 2,
+        "p50": 8,
+        "hi": 25,
+        "unit": "$/AF"
+      },
+      "mechanism": "Added late-season soil moisture lowers fuel flammability. Suppression and damage costs are large, but the acre-foot \u2192 fire-probability link is genuinely unquantified, so this is carried as a bounded co-benefit, not a load-bearing number.",
+      "relationship": "Each acre-foot of soil moisture is a bounded co-benefit against wildfire cost.",
+      "source": "Federal suppression ~$2.9B/yr; per-acre damage ~$500; fuel-moisture link qualitative."
+    },
+    {
+      "slug": "carbon",
+      "label": "Carbon (soil + biomass)",
+      "short": "Carbon",
+      "layer": "Ecological",
+      "beneficiary": "Carbon",
+      "confidence": "LOW",
+      "color": "#6f8a3a",
+      "y_af_per_inch": 106910,
+      "y_af_per_genAF": 0.2672742665639308,
+      "usd_per_inch": [
+        290829,
+        567942,
+        981367
+      ],
+      "usd_per_genAF": {
+        "p10": 0.7270725,
+        "p50": 1.419855,
+        "p90": 2.4534175
+      },
+      "unit_value": {
+        "lo": 1,
+        "p50": 4,
+        "hi": 12,
+        "unit": "$/AF (SCC-based)"
+      },
+      "mechanism": "Incremental plant and soil carbon from green-up, valued at the EPA social cost of carbon. Most forage carbon cycles annually, so the permanent fraction is small.",
+      "relationship": "Each acre-foot of green-up stores a small, permanent fraction of carbon.",
+      "source": "EPA (2023/2025) social cost of carbon ~$190\u2013255/ton CO\u2082 on incremental biomass."
+    }
+  ],
+  "rollups": [
+    {
+      "key": "lens_A",
+      "label": "Direct water value (marginal)",
+      "usd_per_inch": [
+        7826613,
+        11708528,
+        16453141
+      ],
+      "usd_per_genAF": {
+        "p10": 19.5665325,
+        "p50": 29.27132,
+        "p90": 41.1328525
+      },
+      "note": "What the water itself is worth, net. The defensible economic core."
+    },
+    {
+      "key": "eco_core",
+      "label": "Ecological value (core)",
+      "usd_per_inch": [
+        12213037,
+        17733613,
+        24698755
+      ],
+      "usd_per_genAF": {
+        "p10": 30.5325925,
+        "p50": 44.3340325,
+        "p90": 61.7468875
+      },
+      "note": "Forage + recharge + fish/recreation \u2014 the off-river water Layer 1 ignores."
+    },
+    {
+      "key": "combined",
+      "label": "Combined defensible total",
+      "usd_per_inch": [
+        23352378,
+        29860079,
+        37271271
+      ],
+      "usd_per_genAF": {
+        "p10": 58.380945,
+        "p50": 74.6501975,
+        "p90": 93.1781775
+      },
+      "note": "Direct water value + ecological core. These add because they price different water."
+    },
+    {
+      "key": "lens_B",
+      "label": "Economic activity supported",
+      "usd_per_inch": [
+        27712904,
+        37103071,
+        48572299
+      ],
+      "usd_per_genAF": {
+        "p10": 69.28226,
+        "p50": 92.7576775,
+        "p90": 121.4307475
+      },
+      "note": "Broader downstream output with a regional multiplier. A framing, not 'value of water'."
+    },
+    {
+      "key": "lens_C",
+      "label": "Cost to develop the same water",
+      "usd_per_inch": [
+        52510325,
+        63726005,
+        77810405
+      ],
+      "usd_per_genAF": {
+        "p10": 131.2758125,
+        "p50": 159.3150125,
+        "p90": 194.5260125
+      },
+      "note": "Valued at the M&I price Utah already pays. A framing, not additive."
+    }
+  ],
+  "gsl_terminal": {
+    "af_to_lake_per_inch": 72601,
+    "af_to_lake_per_genAF": 0.18150206859723061,
+    "share_of_inch_pct": 18.2,
+    "share_of_streamflow_pct": 51.4,
+    "usd_per_inch": [
+      9462584,
+      12761045,
+      16708382
+    ],
+    "usd_per_genAF": {
+      "p10": 23.65646,
+      "p50": 31.9026125,
+      "p90": 41.770955
+    },
+    "streams": [
+      {
+        "label": "Dust / public-health avoided cost",
+        "usd_per_inch": [
+          3959070,
+          5911977,
+          8403538
+        ],
+        "basis": "Exposed-lakebed PM2.5/arsenic; Owens Lake analog; GSL lakebed = 23\u201334% of Wasatch dust."
+      },
+      {
+        "label": "Lake ecosystem & industry (brine shrimp, minerals, birds)",
+        "usd_per_inch": [
+          2019733,
+          3066178,
+          4440877
+        ],
+        "basis": "Minerals ~$1.1B / 5,368 jobs; brine shrimp ~$67M; GSL aggregate ~$2.5B/yr."
+      },
+      {
+        "label": "Lake-effect snow / ski",
+        "usd_per_inch": [
+          1534722,
+          2351693,
+          3442056
+        ],
+        "basis": "Lake adds 5\u201310% of Utah snow, +5\u20137 ski weeks; ski ~$1.2B / 20K jobs."
+      },
+      {
+        "label": "Lake recreation & birding",
+        "usd_per_inch": [
+          804825,
+          1237164,
+          1848858
+        ],
+        "basis": "Wildlife-viewing consumer surplus ~$48/day."
+      }
+    ],
+    "honesty": "This is the ONLY Great Salt Lake figure that matters for the seeding question: how much of the inch reaches the lake and what that water is jointly worth. The anchors are deliberately modest \u2014 seeding moves lake LEVEL by 2\u20133 orders of magnitude too little to refill it, so the defensible headline value sits upstream, not in the lake."
+  },
+  "presets": {
+    "seeding_generated_af": 4675,
+    "quarter_inch_af": 100000,
+    "one_inch_af": 400000
+  }
+}

@@ -1,253 +1,274 @@
 "use client";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { STATIONS, WATERSHEDS, LAKE_FACTS, SEEDING_CONTEXT } from "@/lib/data";
+import Link from "next/link";
+import {
+  BearEcon, Benefit, fmtUSD, fmtAF, fmtNum, scaleCoef,
+  PATH_COLOR, CONF_COLOR, CONF_LABEL,
+} from "@/lib/bearEcon";
+import { useGenAF } from "./components/useGenAF";
 
-const GSLMap = dynamic(() => import("./components/GSLMap"), { ssr: false, loading: () => <div className="loading">loading map…</div> });
-const ScenarioExplorer = dynamic(() => import("./components/ScenarioExplorer"), { ssr: false });
-const EconomicExplorer = dynamic(() => import("./components/EconomicExplorer"), { ssr: false });
+const INCH_AF = 400000; // one inch over the basin
 
-function fmt(n: any, d = 0) {
-  if (n === undefined || n === null || isNaN(n)) return "—";
-  return Number(n).toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d });
-}
+export default function Overview() {
+  const [econ, setEcon] = useState<BearEcon | null>(null);
+  const [genAF, setGenAF] = useGenAF();
 
-export default function Page() {
-  const [data, setData] = useState<any>(null);
-  const [model, setModel] = useState<any>(null);
-  const [grid, setGrid] = useState<any>(null);
-  const [econ, setEcon] = useState<any>(null);
-  const [updated, setUpdated] = useState<string>("");
-
-  async function load() {
-    try {
-      const r = await fetch("/api/usgs?mode=current", { cache: "no-store" });
-      const j = await r.json();
-      setData(j);
-      setUpdated(new Date().toLocaleTimeString());
-    } catch {}
-  }
   useEffect(() => {
-    load();
-    // GSL-SWY+ model outputs are precomputed offline and written to public/
-    fetch("/model_outputs.json", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((m) => setModel(m))
-      .catch(() => {});
-    // Per-cell seeding-to-lake efficiency surface (spatial GIS layers)
-    fetch("/bear_seeding_grid.geojson", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((g) => setGrid(g))
-      .catch(() => {});
-    // Economic layer (per-AF decomposition + anchors), precomputed in public/
-    fetch("/economic_outputs.json", { cache: "no-store" })
+    fetch("/bear_economics.json", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((e) => setEcon(e))
       .catch(() => {});
-    const t = setInterval(load, 5 * 60 * 1000); // refresh every 5 min
-    return () => clearInterval(t);
   }, []);
 
-  const mCal = model?.calibration;
-  const mSeedLake = model?.seeding_uncertainty?.seeding_delta_af_to_lake;
-  const mSeedStage = model?.seeding_uncertainty?.seeding_delta_stage_inches_per_year;
-  const mLake = model?.lake_context;
+  if (!econ) return <div className="wrap"><div className="loading" style={{ position: "static", padding: 60 }}>loading model…</div></div>;
 
-  const sites = data?.sites ?? {};
-  const saltair = sites["10010000"]?.params?.["62614"]?.value;
-  const lakeElev = saltair ?? LAKE_FACTS.recentSouthArmFt;
+  const s = genAF / INCH_AF; // scale factor vs. a 1-inch basin event
+  const inches = genAF / INCH_AF;
+  const streamflow = econ.basin.streamflow_af_per_genAF * genAF;
 
-  // level bar: map 4188 → 4205 onto 0–100%
-  const lo = 4188, hi = 4205;
-  const pct = Math.max(0, Math.min(100, ((lakeElev - lo) / (hi - lo)) * 100));
-  const targetPct = ((LAKE_FACTS.healthyElevFt - lo) / (hi - lo)) * 100;
-  const deficitFt = LAKE_FACTS.healthyElevFt - lakeElev;
+  const roll = (k: string) => econ.rollups.find((r) => r.key === k)!;
+  const combined = scaleCoef(roll("combined").usd_per_genAF, genAF);
+  const lensA = scaleCoef(roll("lens_A").usd_per_genAF, genAF);
+  const ecoCore = scaleCoef(roll("eco_core").usd_per_genAF, genAF);
+  const lensB = scaleCoef(roll("lens_B").usd_per_genAF, genAF);
+  const lensC = scaleCoef(roll("lens_C").usd_per_genAF, genAF);
 
-  // Discharge can't be negative; USGS emits a large negative sentinel (e.g. -999999)
-  // when a gauge has no current value. Treat anything < 0 or absurdly large as no-data
-  // so one bad gauge can't poison the combined-flow sum.
-  const cfsOf = (id: string): number | undefined => {
-    const v = sites[id]?.params?.["00060"]?.value;
-    if (v === undefined || v === null || isNaN(v) || v < 0 || v > 1e6) return undefined;
-    return v;
-  };
+  const gt = econ.gsl_terminal;
+  const toLake = gt.af_to_lake_per_genAF * genAF;
+  const gslUSD = scaleCoef(gt.usd_per_genAF, genAF);
 
-  // total live inflow (sum of major + minor discharge, cfs) → AF/day
-  const inflowSites = STATIONS.filter((s) => s.type !== "lake_stage");
-  let totalCfs = 0; let counted = 0;
-  for (const s of inflowSites) {
-    const v = cfsOf(s.id);
-    if (v !== undefined) { totalCfs += v; counted++; }
-  }
-  const afPerDay = totalCfs * 1.9835; // 1 cfs ≈ 1.9835 AF/day
-  const afPerYear = afPerDay * 365;
+  const direct = econ.benefits.filter((b) => b.layer === "Direct use");
+  const eco = econ.benefits.filter((b) => b.layer === "Ecological");
+
+  const presets: { label: string; v: number }[] = [
+    { label: "Seeding ≈4.7K AF", v: econ.presets.seeding_generated_af },
+    { label: "¼ inch · 100K AF", v: econ.presets.quarter_inch_af },
+    { label: "1 inch · 400K AF", v: econ.presets.one_inch_af },
+    { label: "2 inch · 800K AF", v: econ.presets.one_inch_af * 2 },
+  ];
 
   return (
-    <div className="app">
-      <aside className="sidebar">
-        <div className="brand">
-          <h1>Great Salt Lake — Situation Monitor</h1>
-          <div className="sub">live USGS gauges · Bear River model · cloud-seeding hotspots</div>
-          <div className="live"><span className="dot" /> live {updated && `· updated ${updated}`}</div>
-        </div>
+    <div className="wrap">
+      <div className="page-head">
+        <h1>From water generated to downstream value</h1>
+        <p className="lede">
+          Pick a quantity of new water generated over the Bear River basin. The model turns it into a
+          defensible downstream dollar value — and shows where the water physically goes, how much
+          reaches the Great Salt Lake, and what each relationship is worth. Every figure scales linearly,
+          so the slider is the whole story.
+        </p>
+      </div>
 
-        {/* LAKE HERO */}
-        <div className="section">
-          <h2>South-arm lake elevation</h2>
-          <div className="hero">
-            <span className="val">{fmt(lakeElev, 2)}</span>
-            <span className="unit">ft (Saltair)</span>
-            <span className={`delta ${deficitFt > 0 ? "below" : "above"}`}>
-              {deficitFt > 0 ? `▼ ${fmt(deficitFt, 2)} ft below healthy` : `▲ ${fmt(-deficitFt, 2)} ft above`}
-            </span>
-          </div>
-          <div className="bar">
-            <div className="fill" style={{ width: `${pct}%` }} />
-            <div className="target" style={{ left: `${targetPct}%` }} title="healthy 4,198 ft" />
-          </div>
-          <div className="scale"><span>4,188</span><span>healthy 4,198 ▲</span><span>4,205</span></div>
-          <div className="note">
-            {saltair ? "Live USGS gauge 10010000." : "Last reported value (live fetch pending)."} Healthy range 4,198–4,205 ft.
-          </div>
+      {/* GENERATED-WATER CONTROL */}
+      <div className="genctl">
+        <div className="genctl-top">
+          <span className="gv">{fmtAF(genAF)}</span>
+          <span className="gu">acre-feet generated</span>
+          <span className="gin">≈ {inches.toFixed(2)} in over the basin · {fmtAF(streamflow)} AF reaches rivers</span>
         </div>
-
-        {/* LIVE INFLOW SUMMARY */}
-        <div className="section">
-          <h2>Live tributary inflow ({counted} gauges)</h2>
-          <div className="statgrid">
-            <div className="stat"><div className="k">Combined flow</div><div className="v">{fmt(totalCfs, 0)} <small>cfs</small></div></div>
-            <div className="stat"><div className="k">≈ Volume / day</div><div className="v">{fmt(afPerDay, 0)} <small>AF</small></div></div>
-            <div className="stat"><div className="k">≈ Annualized</div><div className="v">{fmt(afPerYear / 1000, 0)}<small>K AF/yr</small></div></div>
-            <div className="stat"><div className="k">Hist. avg river</div><div className="v">{fmt(LAKE_FACTS.avgAnnualRiverInflowAF / 1e6, 1)}<small>M AF/yr</small></div></div>
-          </div>
-          <div className="note">Today's flow at upstream gauges. Annualized is a snapshot at this rate, not a forecast.</div>
-        </div>
-
-        {/* GAUGE LIST */}
-        <div className="section">
-          <h2>Stream gauges — current</h2>
-          {STATIONS.filter((s) => s.type !== "lake_stage").map((s) => {
-            const v = cfsOf(s.id);
-            const c = s.type === "inflow_major" ? "#1f6f8b" : "#6fb0c4";
-            return (
-              <div className="gauge" key={s.id}>
-                <span className="sw" style={{ background: c }} />
-                <div className="nm">{s.short}<small>{s.name.split(",")[0]}</small></div>
-                <div className="fl">{fmt(v, 1)}<small>cfs</small></div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* WATERSHED CATCHMENT PHYSICS */}
-        <div className="section">
-          <h2>Watershed catchments</h2>
-          {WATERSHEDS.map((w) => (
-            <div className="gauge" key={w.short} style={{ cursor: "default" }}>
-              <span className="sw" style={{ background: w.short === "Bear" ? "#1f6f8b" : w.short === "Weber" ? "#b88a1e" : "#0f7b54" }} />
-              <div className="nm">{w.name.replace(" Watershed", "")}<small>{fmt(w.areaSqMi)} sq mi · {w.headwaters.split("(")[0]}</small></div>
-              <div className="fl">{w.inflowSharePct}%<small>of inflow</small></div>
-            </div>
+        <div className="genctl-sub">Drag to set the amount of new water. Everything below rescales instantly.</div>
+        <input
+          type="range" min={0} max={800000} step={5000} value={genAF}
+          onChange={(e) => setGenAF(Number(e.target.value))}
+        />
+        <div className="genctl-presets">
+          {presets.map((p) => (
+            <button key={p.label} className={Math.abs(genAF - p.v) < 1 ? "on" : ""} onClick={() => setGenAF(p.v)}>
+              {p.label}
+            </button>
           ))}
-          <div className="note">
-            Three rivers supply most inflow; ~{LAKE_FACTS.directPrecipSharePct}% falls directly on the lake. Total catchment ≈ {fmt(LAKE_FACTS.catchmentSqMi)} sq mi.
+        </div>
+      </div>
+
+      {/* HEADLINE */}
+      <div className="headline">
+        <div className="headline-main">
+          <div className="hl-k">Combined defensible value · per year</div>
+          <div className="hl-v">{fmtUSD(combined[1])}</div>
+          <div className="hl-range">range {fmtUSD(combined[0])} – {fmtUSD(combined[2])} (P10–P90)</div>
+          <div className="hl-note">
+            Direct water value + core ecological value. These add because they price different water or
+            different goods — no double counting. {roll("combined").note}
           </div>
         </div>
-
-        {/* SEEDING IMPACT CONTEXT */}
-        <div className="section">
-          <h2>Cloud-seeding impact context</h2>
-          <div className="seed-row"><span>Per validated event</span><b>{SEEDING_CONTEXT.perEventValidatedAF} AF</b></div>
-          <div className="seed-row"><span>Full-deploy generation</span><b>{fmt(SEEDING_CONTEXT.fullDeployGenLowAF)}–{fmt(SEEDING_CONTEXT.fullDeployGenHighAF)} AF/yr</b></div>
-          <div className="seed-row"><span>Delivery factor → lake</span><b>×{SEEDING_CONTEXT.deliveryFactorToLake}</b></div>
-          <div className="seed-row"><span>Net to lake</span><b>{fmt(SEEDING_CONTEXT.toLakeLowAF)}–{fmt(SEEDING_CONTEXT.toLakeHighAF)} AF/yr</b></div>
-          <div className="seed-row"><span>Share of structural shortfall</span><span className="pct">~0.1–0.25%</span></div>
-          <div className="note">
-            Even at full deployment, seeding adds far less than 1% of the yearly shortfall — too little to refill the lake. Its real value is water for farms and ski areas.
+        <div className="headline-side">
+          <div className="hl-card">
+            <div className="k">Water generated</div>
+            <div className="v">{fmtAF(genAF)} <small>AF</small></div>
+            <div className="s">{inches.toFixed(2)} inch over 4.8M acres</div>
+          </div>
+          <div className="hl-card">
+            <div className="k">Reaches the river network</div>
+            <div className="v">{fmtAF(streamflow)} <small>AF</small></div>
+            <div className="s">blended 80/20 snow/rain runoff ≈ {(econ.basin.blended_runoff_p50 * 100).toFixed(0)}%</div>
           </div>
         </div>
+      </div>
 
-        {/* SCENARIO EXPLORER */}
-        <ScenarioExplorer currentStageFt={lakeElev} seedP50={mSeedLake?.p50} />
-
-        {/* ECONOMIC LAYER — FOLLOW THE WATER */}
-        <EconomicExplorer seedingGeneratedAF={econ?.anchors?.seeding_generated_af} />
-
-        {/* GSL-SWY+ MODEL RESULTS */}
-        {model && (
-          <div className="section">
-            <h2>GSL-SWY+ model — Bear River pilot</h2>
-            <div className="statgrid">
-              <div className="stat"><div className="k">Modeled yield</div><div className="v">{fmt(mCal?.modeled_annual_af / 1000)}<small>K AF/yr</small></div></div>
-              <div className="stat"><div className="k">Observed yield</div><div className="v">{fmt(mCal?.observed_annual_af / 1000)}<small>K AF/yr</small></div></div>
-              <div className="stat"><div className="k">Fit (NSE)</div><div className="v">{fmt(mCal?.nash_sutcliffe, 2)}</div></div>
-              <div className="stat"><div className="k">Volume bias</div><div className="v">{fmt(mCal?.percent_bias, 1)}<small>%</small></div></div>
-            </div>
-            <div className="seed-row"><span>Seeding → lake (p50)</span><b>{fmt(mSeedLake?.p50)} AF/yr</b></div>
-            <div className="seed-row"><span>90% range</span><span className="pct">{fmt(mSeedLake?.p05)}–{fmt(mSeedLake?.p95)} AF/yr</span></div>
-            <div className="seed-row"><span>Stage effect (p50)</span><b>{fmt(mSeedStage?.p50, 3)} in/yr</b></div>
-            <div className="seed-row"><span>Yrs to offset shortfall</span><b>{fmt(mLake?.years_of_seeding_to_offset_structural_shortfall)}</b></div>
-            <div className="note">
-              Snow-aware water balance, calibrated to {model?.meta?.gauge_years} yrs of gauge data (gauge {model?.meta?.outlet_gauge}). At the median effect it would take {fmt(mLake?.years_of_seeding_to_offset_structural_shortfall)} years of seeding to offset the shortfall.
-            </div>
-          </div>
-        )}
-
-        {grid && (
-          <div className="section">
-            <h2>Map layers — Bear River</h2>
-            <div className="seed-row"><span>① Seeding → lake hotspots</span><b>where it pays off</b></div>
-            <div className="seed-row"><span>② Seedable snow zone</span><b>cold enough?</b></div>
-            <div className="seed-row"><span>③ Runoff efficiency</span><b>reaches a river?</b></div>
-            <div className="seed-row"><span>④ Elevation / terrain</span><b>real DEM</b></div>
-            <div className="seed-row"><span>⑤ Land cover</span><b>NLCD 2021</b></div>
-            <div className="note">
-              Toggle layers in the top-right of the map. Turn on the radar over the hotspots to see where today's clouds sit above the ground that actually delivers water to the lake. {grid?._meta?.n_cells} cells across {grid?._meta?.elev_min_m}–{grid?._meta?.elev_max_m} m.
-            </div>
-          </div>
-        )}
-
-        {/* METHODS */}
-        <details className="section methods">
-          <summary>
-            <h2>Methods — how the numbers are computed</h2>
-            <span className="chev" aria-hidden>›</span>
-          </summary>
-          <div className="methods-body">
-            <ol className="steps">
-              <li>
-                <b>Water-balance engine.</b> The basin is split into 6 elevation bands (1,550–3,100 m) and run month-by-month, spun up to a repeating steady state. Each band-month: precipitation splits into rain vs. snow by temperature → snowpack accumulates and melts on a degree-day factor → meltwater + rain enter a soil bucket (150 mm capacity) → evapotranspiration is removed → the excess splits into fast quickflow (25%) and slow groundwater recharge. <b>Outlet flow = quickflow + baseflow.</b>
-              </li>
-              <li>
-                <b>Calibration.</b> Parameters are tuned to {model?.meta?.gauge_years ?? 68} years of the USGS outlet gauge ({model?.meta?.outlet_gauge ?? "10126000"}, Bear River near Corinne): Nash–Sutcliffe {fmt(mCal?.nash_sutcliffe, 2)}, annual-volume bias {fmt(mCal?.percent_bias, 1)}%. Volume is fit closely; the monthly hydrograph shape is rougher (it runs high in late summer).
-              </li>
-              <li>
-                <b>Runoff efficiency (the map).</b> The same calibrated engine is re-run cell-by-cell over a real DEM. For each cell, <span className="mono">runoff_ratio = annual&nbsp;runoff ÷ annual&nbsp;precipitation</span> — the fraction of precip that leaves as streamflow instead of evaporating. Cold high cells shed most of it (high); hot, high-evaporation valleys keep little (low).
-              </li>
-              <li>
-                <b>Hotspot score.</b> <span className="mono">snow_fraction × runoff_ratio × rel_delivery</span> — i.e. cold enough to make snow, efficient at converting it to runoff, and high enough that the water reaches the trunk river instead of valley diversions (delivery ramps 0.35 → 1.0 from valley floor to ≥2,000 m).
-              </li>
-              <li>
-                <b>Seeding yield.</b> The published 3–10% seeding effect applies only to targeted storms over targeted areas, so it&apos;s scaled by a ~3% treatable fraction to a realized basin-wide bump. A paired baseline-vs-seeded run gives ≈{fmt(model?.seeding_central?.delta_af_at_outlet)} AF/yr at the outlet → ×{SEEDING_CONTEXT.deliveryFactorToLake} delivery → ≈{fmt(model?.seeding_central?.delta_af_to_lake)} AF/yr to the lake. A {model?.seeding_uncertainty?.n_draws ?? 400}-draw Monte Carlo over the uncertain parameters gives the p50 ≈ {fmt(mSeedLake?.p50)} AF/yr and the 90% range.
-              </li>
-              <li>
-                <b>Honesty check.</b> ≈{fmt(mSeedLake?.p50)} AF/yr against an {fmt(mLake?.structural_shortfall_af / 1000)}K AF structural shortfall is ~{fmt(mLake?.years_of_seeding_to_offset_structural_shortfall)} years to close — seeding can&apos;t refill the lake. The per-cell map distributes that validated yield by score; it shows <em>where</em> the water originates, not extra water.
-              </li>
-            </ol>
-            <div className="note">
-              The ~3% treatable fraction is the key assumption — yield scales linearly with it, and it&apos;s set to land the physical pathway inside the operationally-validated envelope rather than derived from first principles. Vibe-coded side project; figures are illustrative, not Rainmaker company numbers.
-            </div>
-          </div>
-        </details>
-
-        <div className="foot">
-          Data: USGS National Water Information System (waterservices.usgs.gov), public/no-key. Elevation: open-elevation (SRTM/ASTER). Land cover: NLCD 2021 (MRLC/USGS). Lake facts: USU GSL Strike Team, UT DNR, Grow the Flow. Seeding context: bottom-up estimate from Rainmaker disclosed validation — illustrative, not company figures.
+      {/* PARTITION — where the water physically goes */}
+      <div className="csec">
+        <div className="csec-h">Where the water physically goes</div>
+        <div className="csec-sub">
+          The same acre-feet, traced by fate. Value comes from the first four bands; the last is lost to
+          sublimation. This is the physical backbone every dollar figure is built on.
         </div>
-      </aside>
+        <div className="partition">
+          <div className="part-stack">
+            {econ.partition.map((p) => (
+              <div key={p.fate} className="part-seg"
+                style={{ width: `${(p.af / INCH_AF) * 100}%`, background: PATH_COLOR[p.path] }}
+                title={`${p.fate}: ${fmtAF(p.af * s)} AF`} />
+            ))}
+          </div>
+          <div className="part-rows">
+            {econ.partition.map((p) => (
+              <div key={p.fate} className="part-row">
+                <i style={{ background: PATH_COLOR[p.path] }} />
+                <span className="pn">{p.fate}</span>
+                <span className="pv">{fmtAF(p.af * s)} AF</span>
+                <span className="pp">{((p.af / INCH_AF) * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-      <main className="mapwrap">
-        {data ? <GSLMap data={data} model={model} grid={grid} /> : <div className="loading">fetching live USGS data…</div>}
-      </main>
+      {/* ROLLUP CARDS */}
+      <div className="csec">
+        <div className="csec-h">The defensible total, in two stacks</div>
+        <div className="csec-sub">
+          Direct use is what the water itself is worth on the market. Ecological core is the off-river
+          value of the water that is never diverted. They sum to the headline.
+        </div>
+        <div className="rollups">
+          <div className="roll-card">
+            <div className="rc-k">Direct water value</div>
+            <div className="rc-v">{fmtUSD(lensA[1])}</div>
+            <div className="rc-range">{fmtUSD(lensA[0])} – {fmtUSD(lensA[2])}</div>
+            <div className="rc-note">Irrigation + municipal + hydropower — the market value of the water itself, net.</div>
+          </div>
+          <div className="roll-card">
+            <div className="rc-k">Ecological core</div>
+            <div className="rc-v">{fmtUSD(ecoCore[1])}</div>
+            <div className="rc-range">{fmtUSD(ecoCore[0])} – {fmtUSD(ecoCore[2])}</div>
+            <div className="rc-note">Forage, recharge, and in-channel fish/recreation — value from water that's never diverted.</div>
+          </div>
+          <div className="roll-card feature">
+            <div className="rc-k">Combined · per year</div>
+            <div className="rc-v">{fmtUSD(combined[1])}</div>
+            <div className="rc-range">{fmtUSD(combined[0])} – {fmtUSD(combined[2])}</div>
+            <div className="rc-note">The headline number. Conservative: wildfire and carbon are excluded from the core.</div>
+          </div>
+        </div>
+      </div>
+
+      {/* RELATIONSHIP TABLE */}
+      <div className="csec">
+        <div className="csec-h">Every relationship, priced</div>
+        <div className="csec-sub">
+          Each row is one mechanism that turns an acre-foot into value. Click any row for the basis,
+          range, and source behind the number.
+        </div>
+        <table className="reltable">
+          <thead>
+            <tr>
+              <th>Relationship</th>
+              <th className="hide-sm">Beneficiary</th>
+              <th>Confidence</th>
+              <th className="num">Water (AF)</th>
+              <th className="num">Value / yr</th>
+            </tr>
+          </thead>
+          <tbody>
+            <RelGroup title="Direct use — the water itself" rows={direct} genAF={genAF} />
+            <RelGroup title="Ecological — value off the river" rows={eco} genAF={genAF} />
+          </tbody>
+        </table>
+        <div className="note" style={{ marginTop: 10 }}>
+          Headline = direct use + the three ecological core rows (fish/recreation, recharge, forage).
+          Wildfire and carbon are shown but kept out of the conservative total.
+        </div>
+      </div>
+
+      {/* GSL TERMINAL CALLOUT */}
+      <div className="csec">
+        <div className="csec-h">What reaches the Great Salt Lake</div>
+        <div className="csec-sub">
+          The lake is the basin's terminal sink — the one place the GSL question actually belongs in this model.
+        </div>
+        <Link href="/gsl" className="gsl-callout">
+          <div className="gsl-co-num">
+            <div className="n">{fmtAF(toLake)}</div>
+            <div className="l">AF reach the lake</div>
+            <div className="l">{gt.share_of_inch_pct}% of generated · {gt.share_of_streamflow_pct}% of streamflow</div>
+          </div>
+          <div className="gsl-co-body">
+            <div className="t">≈ {fmtUSD(gslUSD[1])}/yr in terminal value at the lake</div>
+            <div className="d">
+              Dust suppression, lake ecosystem & industry, lake-effect snow, and recreation — joint products
+              of the water that makes it all the way down. Honest framing: this is real value, but seeding
+              volumes are far too small to refill the lake.
+            </div>
+            <div className="go">See the lake terminal detail →</div>
+          </div>
+        </Link>
+      </div>
+
+      {/* LENS FRAMINGS */}
+      <div className="csec">
+        <div className="csec-h">Two alternative framings</div>
+        <div className="csec-sub">
+          Not added to the headline — different lenses on the same water, useful depending on who's asking.
+        </div>
+        <div className="lenses">
+          <div className="lens-card">
+            <div className="lc-k">Economic activity supported</div>
+            <div className="lc-v">{fmtUSD(lensB[1])}</div>
+            <div className="lc-note">{roll("lens_B").note}</div>
+          </div>
+          <div className="lens-card">
+            <div className="lc-k">Cost to develop the same water</div>
+            <div className="lc-v">{fmtUSD(lensC[1])}</div>
+            <div className="lc-note">{roll("lens_C").note}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="footnote">
+        Model: {econ.meta.model}. {fmtNum(econ.meta.n_draws)}-draw Monte Carlo, seed {econ.meta.seed}.
+        Basin ≈ {fmtNum(econ.basin.drainage_area_sqmi)} sq mi · {fmtNum(econ.basin.area_acres)} acres ·
+        80/20 snow/rain split (runoff {econ.basin.runoff_snow} snow, {econ.basin.runoff_rain} rain).
+        Unit values are sourced marginal/avoided-cost anchors — illustrative, not Rainmaker company figures.
+        Live gauges and the seeding-hotspot map are on the <Link href="/live" style={{ color: "var(--accent2)" }}>Live monitor</Link>.
+      </div>
     </div>
+  );
+}
+
+function RelGroup({ title, rows, genAF }: { title: string; rows: Benefit[]; genAF: number }) {
+  return (
+    <>
+      <tr className="grp-row"><td colSpan={5}>{title}</td></tr>
+      {rows.map((b) => {
+        const af = b.y_af_per_genAF * genAF;
+        const usd = scaleCoef(b.usd_per_genAF, genAF);
+        return (
+          <tr key={b.slug} onClick={() => { window.location.href = `/benefit/${b.slug}`; }}>
+            <td>
+              <Link href={`/benefit/${b.slug}`} className="rt-name" style={{ textDecoration: "none", color: "inherit" }}>
+                <span className="sw" style={{ background: b.color }} />{b.label}
+              </Link>
+              <div className="rt-mech">{b.mechanism}</div>
+            </td>
+            <td className="hide-sm">{b.beneficiary}</td>
+            <td>
+              <span className="chip chip-conf" style={{ background: CONF_COLOR[b.confidence] }}>{CONF_LABEL[b.confidence]}</span>
+            </td>
+            <td className="num">{fmtAF(af)}</td>
+            <td className="num">{fmtUSD(usd[1])}</td>
+          </tr>
+        );
+      })}
+    </>
   );
 }
