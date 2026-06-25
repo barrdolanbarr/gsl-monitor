@@ -4,8 +4,9 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/", label: "Overview" },
-  { href: "/benefit/irrigation", label: "Water uses", match: "/benefit" },
+  { href: "/benefit", label: "Water uses", match: "/benefit" },
   { href: "/gsl", label: "Reaches the GSL", match: "/gsl" },
+  { href: "/basin", label: "The basin & method", match: "/basin" },
   { href: "/live", label: "Live monitor", match: "/live" },
 ];
 

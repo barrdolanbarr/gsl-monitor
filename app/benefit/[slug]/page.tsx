@@ -63,6 +63,18 @@ export default function BenefitDetail() {
         </div>
       </div>
 
+      {/* use switcher — jump between relationships */}
+      <div className="use-switch">
+        <span className="us-label">Switch use:</span>
+        {econ.benefits.map((x) => (
+          <Link key={x.slug} href={`/benefit/${x.slug}`}
+            className={x.slug === slug ? "us-chip on" : "us-chip"}
+            style={x.slug === slug ? { borderColor: x.color, color: x.color } : undefined}>
+            <span className="us-dot" style={{ background: x.color }} />{x.short}
+          </Link>
+        ))}
+      </div>
+
       {/* mini generated-water control */}
       <div className="genctl">
         <div className="genctl-top">

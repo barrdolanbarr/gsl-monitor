@@ -80,6 +80,25 @@ export default function Overview() {
         </div>
       </div>
 
+      {/* HOW TO READ THIS */}
+      <div className="explain">
+        <div className="explain-h">How every number on this page is built</div>
+        <div className="explain-flow">
+          <div className="ef-node"><span className="ef-b">Add water</span><span className="ef-s">an amount generated over the basin</span></div>
+          <span className="ef-op">→</span>
+          <div className="ef-node"><span className="ef-b">It splits up</span><span className="ef-s">some reaches rivers, some soaks in, some is lost</span></div>
+          <span className="ef-op">→</span>
+          <div className="ef-node"><span className="ef-b">Each part does a job</span><span className="ef-s">farms, cities, power, fish, soil</span></div>
+          <span className="ef-op">→</span>
+          <div className="ef-node"><span className="ef-b">Worth $ / year</span><span className="ef-s">priced from real market & study values</span></div>
+        </div>
+        <div className="note" style={{ marginTop: 10 }}>
+          Every figure is a range, not a guess — a 200,000-run simulation gives the middle (P50) and the
+          spread (P10–P90). For the full plain-language method and what the basin actually is, see{" "}
+          <Link href="/basin" style={{ color: "var(--accent)" }}>The basin &amp; method</Link>.
+        </div>
+      </div>
+
       {/* HEADLINE */}
       <div className="headline">
         <div className="headline-main">
@@ -87,8 +106,8 @@ export default function Overview() {
           <div className="hl-v">{fmtUSD(combined[1])}</div>
           <div className="hl-range">range {fmtUSD(combined[0])} – {fmtUSD(combined[2])} (P10–P90)</div>
           <div className="hl-note">
-            Direct water value + core ecological value. These add because they price different water or
-            different goods — no double counting. {roll("combined").note}
+            Direct water value plus core ecological value. The two add up cleanly because they price
+            different water — or a different use of the same water — so nothing is counted twice.
           </div>
         </div>
         <div className="headline-side">
@@ -166,8 +185,9 @@ export default function Overview() {
       <div className="csec">
         <div className="csec-h">Every relationship, priced</div>
         <div className="csec-sub">
-          Each row is one mechanism that turns an acre-foot into value. Click any row for the basis,
-          range, and source behind the number.
+          Each row is one mechanism that turns an acre-foot into value.{" "}
+          <b>Click any row</b> to open its own page — the basis, the range, and the source behind the
+          number — or browse them all on <Link href="/benefit" style={{ color: "var(--accent)" }}>Water uses</Link>.
         </div>
         <table className="reltable">
           <thead>

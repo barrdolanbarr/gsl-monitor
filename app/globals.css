@@ -410,3 +410,97 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 
 .footnote{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);font-family:var(--mono);line-height:1.7}
 .footnote a{color:var(--accent2)}
+
+/* ============================================================= */
+/* ============  POLISH PASS — new shared components  =========== */
+/* ============================================================= */
+
+/* "how every number is built" explainer (Overview) */
+.explain{
+  background:#f7faf8;border:1px solid var(--line);border-radius:16px;
+  padding:18px 20px;margin:22px 0;
+}
+.explain-h{font-size:13px;font-weight:700;letter-spacing:-.01em;margin-bottom:14px;color:var(--ink)}
+.explain-flow{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+.ef-node{
+  flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);
+}
+.ef-node .ef-b{font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.ef-node .ef-s{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+.ef-op{display:flex;align-items:center;font-size:20px;color:var(--accent);font-family:var(--mono);flex:0 0 auto}
+@media (max-width:680px){.ef-op{transform:rotate(90deg);align-self:center}}
+
+/* benefit index cards (Water uses) */
+.use-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:680px){.use-grid{grid-template-columns:1fr}}
+.use-card{
+  display:block;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--accent);
+  border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);text-decoration:none;color:var(--ink);
+  transition:transform .14s ease,box-shadow .14s ease;
+}
+.use-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,40,30,.12)}
+.use-card .uc-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.use-card .uc-name{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.use-card .uc-mech{font-size:12px;color:var(--muted);line-height:1.5;min-height:36px}
+.use-card .uc-foot{display:flex;align-items:flex-end;gap:16px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.use-card .uc-stat{display:flex;flex-direction:column}
+.use-card .uc-stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.use-card .uc-stat .v{font-size:16px;font-weight:800;font-family:var(--mono);margin-top:2px}
+.use-card .uc-go{margin-left:auto;font-size:12px;font-family:var(--mono);color:var(--accent2);align-self:center}
+
+/* use switcher (benefit detail) */
+.use-switch{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:#f7faf8;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:6px 0 18px;
+}
+.use-switch .us-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-right:2px}
+.use-switch .us-chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel);
+  color:var(--muted);text-decoration:none;transition:all .14s ease;
+}
+.use-switch .us-chip:hover{border-color:var(--accent2);color:var(--ink)}
+.use-switch .us-chip.on{background:var(--panel);font-weight:700}
+.use-switch .us-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+/* basin fact grid */
+.factgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:880px){.factgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.factgrid{grid-template-columns:1fr}}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+.fact .fk{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.fact .fv{font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-.02em;margin:6px 0 4px;color:var(--accent)}
+.fact .fv small{font-size:13px;color:var(--muted);font-weight:400;margin-left:3px}
+.fact .fs{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* big "relationship shape" graphic */
+.bigrel{
+  display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#0f7b54,#1f6f8b);color:#fff;border-radius:16px;
+  padding:22px 24px;box-shadow:var(--shadow);margin:18px 0 22px;
+}
+.bigrel .br-node{
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:10px;
+  padding:10px 18px;font-size:15px;font-weight:700;letter-spacing:-.01em;
+}
+.bigrel .br-op{font-size:22px;font-family:var(--mono);opacity:.85}
+@media (max-width:520px){.bigrel .br-op{transform:rotate(90deg)}}
+
+/* plain-language numbered steps */
+.steps-plain{list-style:none;counter-reset:pstep;display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.steps-plain li{
+  position:relative;padding:16px 18px 16px 52px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+  font-size:13.5px;line-height:1.6;color:var(--ink);
+}
+.steps-plain li::before{
+  counter-increment:pstep;content:counter(pstep);
+  position:absolute;left:16px;top:16px;
+  width:26px;height:26px;border-radius:50%;
+  background:#eef5f1;border:1px solid var(--accent);color:var(--accent);
+  font-family:var(--mono);font-size:13px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps-plain li b{font-weight:700}
+.steps-plain li i{font-style:italic}
