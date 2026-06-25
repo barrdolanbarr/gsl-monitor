@@ -21,9 +21,8 @@ export default function BasinPage() {
       <div className="page-head">
         <h1>The Bear River Basin — and how this model works</h1>
         <p className="lede">
-          Two things in one place: what the Bear River Basin actually is and how it uses water today, then
-          a plain-language walkthrough of how we turn an amount of new water into a defensible dollar value.
-          No jargon — if a step needs a number, it's sourced.
+          What the Bear River Basin is, how it uses water today, and how this model turns an amount of new
+          water into a dollar value you can defend. Every number that carries weight has a source behind it.
         </p>
       </div>
 
@@ -84,8 +83,8 @@ export default function BasinPage() {
       <div className="csec">
         <div className="csec-h">How the model works, step by step</div>
         <div className="csec-sub">
-          The interview question was simple: an extra inch falls on the basin — what is it worth
-          downstream? The answer is a chain of relationships, each in the same shape.
+          The question is simple: an extra inch falls on the basin, what is it worth downstream? The answer
+          is a chain of relationships, each one built the same way.
         </div>
 
         <div className="bigrel">
@@ -164,7 +163,7 @@ export default function BasinPage() {
 
       {/* THE REFRAME */}
       <div className="csec">
-        <div className="csec-h">The one idea that reframes everything: marginal ≠ average</div>
+        <div className="csec-h">Why the marginal inch isn't worth the average inch</div>
         <div className="det-card" style={{ borderLeft: "3px solid var(--accent)" }}>
           <p>
             A flat price per acre-foot assumes every inch is worth the same. It isn't. A seeded inch is{" "}
@@ -175,10 +174,10 @@ export default function BasinPage() {
             already-cold reach buys almost nothing.
           </p>
           <p style={{ marginTop: 12 }}>
-            The strategic takeaway: the product isn't acre-feet — it's <b>flow at the right time and place</b>.
-            The same inch can be worth a little or a lot depending on where and when it lands. That's exactly
-            why the most useful answer is a function you can move with a slider, not a single number. The
-            next build on this site makes that concrete by comparing <i>real</i> years where the basin
+            So an acre-foot is only half the story; the other half is <b>when and where it lands</b>. The same
+            inch can do little or a lot depending on whether it shows up on an already-cold reach in May or a
+            short canal in August. That's the honest case for a slider over a headline number — you're looking
+            at a range, not a point. A later build pins this down by comparing <i>real</i> years when the basin
             produced very different amounts of water.
           </p>
         </div>

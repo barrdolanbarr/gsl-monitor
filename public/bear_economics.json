@@ -93,7 +93,27 @@
           "label": "University of Nevada, Reno Extension — alfalfa hay establishment, production costs & returns (net return to water for hay).",
           "url": "https://extension.unr.edu/publication.aspx?PubID=3855"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "tons of alfalfa hay",
+        "per_af": 0.7246376811594204,
+        "sec_label": "small (60-lb) bales",
+        "sec_per_af": 24.15458937198068,
+        "confidence": "HIGH",
+        "blurb": "Roughly three-quarters of a ton of alfalfa for every acre-foot that actually reaches a field — Utah counts about 1.38 acre-feet of applied water per ton. Spread a full inch over the basin and you are talking tens of thousands of tons: the winter feed behind Cache Valley's dairies and cow-calf herds.",
+        "source": "Salt Lake Tribune / Utah water-use data — ~1.38 AF per ton of alfalfa",
+        "source_url": "https://www.sltrib.com/news/environment/2022/11/24/one-crop-uses-more-than-half/",
+        "stat_per_genAF": 0.12714274462714154,
+        "sec_per_genAF": 4.238091487571384
+      },
+      "person": {
+        "name": "Lynn Egley",
+        "role": "Cache County farmer",
+        "org": "near Logan, Utah",
+        "drives": "Egley ripped out a patchwork of siphon tubes, dirt ditches and crumbling concrete and put in an overhead linear system — the unglamorous plumbing that lets a family farm keep going on less water. The thing that moves a grower like him isn't the going price of hay; it's getting every drop onto the crop and keeping the place healthy enough to hand to the next person who farms it.",
+        "source": "USDA NRCS — WaterSMART irrigation upgrade, Cache County",
+        "source_url": "https://www.nrcs.usda.gov/state-offices/utah/news/watersmart-partnership-boosts-irrigation-efficiency-in-cache-county"
+      }
     },
     {
       "slug": "municipal",
@@ -132,7 +152,24 @@
           "label": "Utah Division of Water Resources — Bear River Development (220,000 AF/yr; quoted ~$365–400/AF; $1.5–2.8B capital).",
           "url": "https://water.utah.gov/bear-river-dev/"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "households supplied for a year",
+        "per_af": 2.2222222222222223,
+        "confidence": "HIGH",
+        "blurb": "Utah sizes culinary systems at about 0.45 acre-feet per household per year, indoor and out. The municipal slice is small, but it still covers tens of thousands of homes for a full year — the difference between a town that can say yes to its next subdivision and one that can't.",
+        "source": "Utah Division of Water Rights — 0.45 AF per family planning figure",
+        "source_url": "https://www.waterrights.utah.gov/wrinfo/policy/wateruse.asp",
+        "stat_per_genAF": 0.07060734636494598
+      },
+      "person": {
+        "name": "Voneene Jorgensen",
+        "role": "General Manager",
+        "org": "Bear River Water Conservancy District",
+        "drives": "Her district's whole job is to make sure the tap still runs in Box Elder County's fast-growing towns decades from now. For someone in that chair the win was never a dollar figure — it's reliable drinking water and never having to tell a community there isn't enough.",
+        "source": "Bear River Water Conservancy District",
+        "source_url": "https://www.brwcdutah.gov/"
+      }
     },
     {
       "slug": "hydropower",
@@ -171,7 +208,27 @@
           "label": "PacifiCorp — Bear River hydroelectric cascade (Soda 14 MW, Grace 33 MW, Oneida; Cutler downstream).",
           "url": "https://www.pacificorp.com/energy/hydro/bear-river.html"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "MWh of carbon-free electricity",
+        "per_af": 0.45,
+        "sec_label": "homes powered for a year",
+        "sec_per_af": 0.04285714285714286,
+        "confidence": "MEDIUM",
+        "blurb": "The same water generates at every powerhouse as it drops through the four-dam cascade, never consumed — about 0.45 MWh per acre-foot, an engineering estimate from the system's roughly 107 MW of capacity. A full inch lights several thousand homes for a year on its way to the lake.",
+        "source": "PacifiCorp Bear River hydro (capacity) + U.S. EIA residential use",
+        "source_url": "https://www.pacificorp.com/energy/hydro/bear-river.html",
+        "stat_per_genAF": 0.15895552672111277,
+        "sec_per_genAF": 0.015138621592486929
+      },
+      "person": {
+        "name": "Mark Stenberg",
+        "role": "Senior Operations Project Manager, Bear River Project",
+        "org": "PacifiCorp / Rocky Mountain Power",
+        "drives": "He runs the century-old cascade, and in the company's own bulletins he's the voice on flood risk — the person watching the snowpack and the gates so a wet spring doesn't become a downstream emergency. In that seat the megawatt price isn't the point; keeping old, emission-free plants running safely and moving water without endangering anyone is.",
+        "source": "PacifiCorp newsroom — Bear River system flood operations",
+        "source_url": "https://www.pacificorp.com/about/newsroom/news-releases/bear-river-hydro-high-flooding-potential.html"
+      }
     },
     {
       "slug": "instream",
@@ -230,7 +287,27 @@
           "label": "UF/IFAS EDIS FE1067 — economic value of freshwater recreation (benefit-transfer; ~$71/angler-day WTP).",
           "url": "https://edis.ifas.ufl.edu/publication/fe1067"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "miles of cold, connected trout stream",
+        "per_af": 0.0014285714285714286,
+        "sec_label": "adult Bonneville cutthroat (~500 / mile)",
+        "sec_per_af": 0.7142857142857143,
+        "confidence": "MED-LOW",
+        "blurb": "Held back as summer baseflow, this water keeps tributary reaches cold and connected through the late-summer pinch that decides whether trout make it. On the order of a mile of habitat for every ~700 acre-feet of restored summer flow — each mile home to hundreds of native cutthroat. Treat it as a planning-grade estimate, not a fish count.",
+        "source": "Utah DWR habitat-per-project framing + natural-flow baseflow ecology",
+        "source_url": "https://wildlife.utah.gov/news/wildlife-blog/1112-cutthroat-trout-conservation-success.html",
+        "stat_per_genAF": 0.00020390458801218897,
+        "sec_per_genAF": 0.10195229400609448
+      },
+      "person": {
+        "name": "Jim DeRito",
+        "role": "Bear River fisheries restoration coordinator",
+        "org": "Trout Unlimited",
+        "drives": "He starts most projects with a cup of coffee and one question for the rancher across the table: what would make your operation run better? What makes him tick is a reconnected river — pulling out push-up dams so native Bonneville cutthroat can move again — done in a way the people who own the water actually want.",
+        "source": "AFFTA Fisheries Fund — Bear River ranch diversion restoration",
+        "source_url": "https://afftafisheriesfund.org/blog-spotlight/ranchers-find-new-more-sustainable-ways-to-draw-water-from-utahs-bear-river"
+      }
     },
     {
       "slug": "recharge",
@@ -269,7 +346,24 @@
           "label": "Maliva (2014), 'Economics of Managed Aquifer Recharge,' Water 6(5):1257 — MAR cost $90–1,100/AF, median ~$390.",
           "url": "https://www.mdpi.com/2073-4441/6/5/1257/htm"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "household-years of water banked underground",
+        "per_af": 2.2222222222222223,
+        "confidence": "MEDIUM",
+        "blurb": "Water that soaks in instead of running off recharges the aquifer Cache Valley is steadily drawing down — most monitored wells in the valley are falling. Measured as drinking water, an inch's worth is a year's supply for tens of thousands of households, kept in underground storage for the next dry year.",
+        "source": "Utah Division of Water Rights (0.45 AF/family) + Utah Geological Survey, Cache Valley aquifer storage",
+        "source_url": "https://geology.utah.gov/map-pub/survey-notes/using-aquifers-for-water-storage-in-cache-valley/",
+        "stat_per_genAF": 0.3188227188690063
+      },
+      "person": {
+        "name": "Bethany Neilson",
+        "role": "Water resources professor",
+        "org": "Utah State University",
+        "drives": "She helped lead a basin-wide reckoning of Cache Valley's groundwater — tracing how fast new water reaches the aquifer and where it comes from. The payoff she's after isn't priced in dollars; it's a valley whose underground savings account finally stops shrinking.",
+        "source": "Utah Legislature — Groundwater Assessment of Cache Valley (USU)",
+        "source_url": "https://le.utah.gov/interim/2024/pdf/00000368.pdf"
+      }
     },
     {
       "slug": "forage",
@@ -308,7 +402,27 @@
           "label": "National Research Council, 'Valuing River Ecosystem Services' (Appendix A, River Science at the USGS, NAP) — production-function caveats; low-summer-flow services.",
           "url": "https://nap.nationalacademies.org/read/11773/chapter/11"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "AUMs of grazing (one cow, one month)",
+        "per_af": 0.5,
+        "sec_label": "cow-calf pairs grazed all summer",
+        "sec_per_af": 0.1,
+        "confidence": "MED-LOW",
+        "blurb": "Extra soil moisture greens up rangeland the river never directly touched. An animal-unit-month is the forage one cow eats in a month; conservatively this band supplies tens of thousands of them — enough to summer thousands of cow-calf pairs. Lower-value water, but real to the operations that depend on it.",
+        "source": "Wyoming Extension B-1320 (AUM concepts) + USU forage needs",
+        "source_url": "https://wyoextension.org/publications/html/B1320/",
+        "stat_per_genAF": 0.1336371332819654,
+        "sec_per_genAF": 0.026727426656393077
+      },
+      "person": {
+        "name": "Stewart Hayduk",
+        "role": "Third-generation rancher (43 years on the same ground)",
+        "org": "Almy Ditch, Bear River, Utah",
+        "drives": "When the old push-up dam came out and nearly 2,000 feet of the Bear was rebuilt, he kept his water and the river got healthier. For a rancher with that much history on one place, the motive isn't the per-head margin — it's leaving the ground, the herd and the river in good shape for whoever comes next.",
+        "source": "U.S. Fish & Wildlife Service — the Amazing Almy Ditch",
+        "source_url": "https://www.fws.gov/story/2023-03/epic-bear-river-cutthroat-trout-amazing-almy-ditch"
+      }
     },
     {
       "slug": "wildfire",
@@ -347,7 +461,24 @@
           "label": "National Research Council, 'Valuing River Ecosystem Services' (Appendix A, River Science at the USGS, NAP) — production-function caveats; low-summer-flow services.",
           "url": "https://nap.nationalacademies.org/read/11773/chapter/11"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "acres with improved late-summer fuel moisture",
+        "per_af": 1.0,
+        "confidence": "LOW",
+        "blurb": "Soil moisture that lingers into fire season lowers how hot and how big a watershed burns — and post-fire sediment is what fills the reservoirs Utah stores its water in. This is the softest number on the site: roughly an acre of moister ground per acre-foot retained, illustrative only.",
+        "source": "USU Utah Water Research Lab — post-wildfire streamflow & reservoir sediment",
+        "source_url": "https://www.usu.edu/today/story/from-flames-to-flow-utah-water-research-lab-unraveling-streamflow-changes-post-wildfire",
+        "stat_per_genAF": 0.4118377011814695
+      },
+      "person": {
+        "name": "Belize Lane",
+        "role": "Associate Professor, Utah Water Research Laboratory",
+        "org": "Utah State University",
+        "drives": "She studies what happens to streamflow after a watershed burns, and how the sediment that follows chokes downstream reservoirs. What drives that work isn't a market price; it's keeping the snowpack-fed plumbing of the basin intact so one bad fire year doesn't cost a city its water.",
+        "source": "USU — From Flames to Flow",
+        "source_url": "https://www.usu.edu/today/story/from-flames-to-flow-utah-water-research-lab-unraveling-streamflow-changes-post-wildfire"
+      }
     },
     {
       "slug": "carbon",
@@ -386,7 +517,27 @@
           "label": "U.S. EPA (2023) — Report on the Social Cost of Greenhouse Gases (~$190–255/ton CO₂).",
           "url": "https://www.epa.gov/system/files/documents/2023-12/epa_scghg_2023_report_final.pdf"
         }
-      ]
+      ],
+      "on_ground": {
+        "unit_label": "tons of CO₂ held in soil and plants",
+        "per_af": 0.021052631578947368,
+        "sec_label": "cars off the road for a year",
+        "sec_per_af": 0.004576659038901602,
+        "confidence": "LOW",
+        "blurb": "Better-watered soils and riparian growth pull a little carbon out of the air and hold it. Run backward from the federal social cost of carbon, an inch implies a couple thousand tons of CO₂ — equivalent to taking a few hundred cars off the road for a year. A soft, policy-dependent figure, flagged as such.",
+        "source": "EPA Social Cost of GHG (2023) + EPA greenhouse-gas equivalencies",
+        "source_url": "https://www.epa.gov/system/files/documents/2023-12/epa_scghg_2023_report_final.pdf",
+        "stat_per_genAF": 0.005626826664503806,
+        "sec_per_genAF": 0.0012232231879356098
+      },
+      "person": {
+        "name": "Matt Yost",
+        "role": "Agroclimate & soils scientist",
+        "org": "Utah State University",
+        "drives": "He's part of a multi-million-dollar effort to actually measure carbon farming across Western working lands — how much carbon healthier, better-watered soil can hold. The reward he's chasing isn't a carbon credit's price; it's ground that stores more water and more carbon at once, and stays productive as the climate dries.",
+        "source": "USU — soil & plant scientists in $15M carbon-farming study",
+        "source_url": "https://www.usu.edu/today/story/usu-soil-amp-plant-scientists-part-of-15m-project-to-study-carbon-farming"
+      }
     }
   ],
   "rollups": [

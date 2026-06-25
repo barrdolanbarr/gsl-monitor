@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  BearEcon, Benefit, Citation, fmtUSD, fmtAF, scaleCoef,
+  BearEcon, Benefit, Citation, fmtUSD, fmtAF, fmtStat, scaleCoef,
   CONF_COLOR, CONF_LABEL, splitFootnotes,
 } from "@/lib/bearEcon";
 import { useGenAF } from "../../components/useGenAF";
@@ -143,10 +143,44 @@ export default function BenefitDetail() {
             <p>{b.mechanism}</p>
           </div>
 
+          {b.on_ground && (
+            <div className="det-card og-card">
+              <div className="og-kicker">Forget dollars for a second</div>
+              <div className="og-readout">
+                <span className="og-v">{fmtStat(b.on_ground.stat_per_genAF * genAF)}</span>
+                <span className="og-u">{b.on_ground.unit_label}</span>
+              </div>
+              {b.on_ground.sec_per_genAF !== undefined && (
+                <div className="og-sec">
+                  about {fmtStat(b.on_ground.sec_per_genAF * genAF)} {b.on_ground.sec_label}
+                </div>
+              )}
+              <p className="og-blurb">{b.on_ground.blurb}</p>
+              <div className="og-foot">
+                <span className="chip chip-conf" style={{ background: CONF_COLOR[b.on_ground.confidence] }}>{CONF_LABEL[b.on_ground.confidence]}</span>
+                <a className="srcline" href={b.on_ground.source_url} target="_blank" rel="noopener noreferrer">{b.on_ground.source}</a>
+              </div>
+            </div>
+          )}
+
+          {b.person && (
+            <div className="det-card person-card">
+              <div className="pc-kicker">The person on the other end of this water</div>
+              <div className="pc-id">
+                <div className="pc-mug" aria-hidden="true">{b.person.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}</div>
+                <div>
+                  <div className="pc-name">{b.person.name}</div>
+                  <div className="pc-role">{b.person.role} · {b.person.org}</div>
+                </div>
+              </div>
+              <p className="pc-drives">{b.person.drives}</p>
+              <a className="srcline" href={b.person.source_url} target="_blank" rel="noopener noreferrer">{b.person.source}</a>
+            </div>
+          )}
+
           {b.dissertation && (
             <div className="det-card phd-card">
               <h3>The relationship, in depth</h3>
-              <span className="phd-tag">dissertation-level</span>
               <div className="phd-body"><Prose text={b.dissertation} /></div>
             </div>
           )}

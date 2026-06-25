@@ -9,6 +9,31 @@ export type Coef = { p10: number; p50: number; p90: number };
 // a footnoted source: n is the in-text marker, label is the citation, url is the direct link
 export type Citation = { n: number; label: string; url: string };
 
+// a non-dollar "natural unit" for a use (tons of hay, fish, MWh, ...).
+// stat_per_genAF scales linearly with the water slider, like the dollar coefficients.
+export type OnGround = {
+  unit_label: string;
+  per_af: number;
+  stat_per_genAF: number;
+  blurb: string;
+  confidence: "HIGH" | "MEDIUM" | "MED-LOW" | "LOW";
+  source: string;
+  source_url: string;
+  sec_label?: string;
+  sec_per_af?: number;
+  sec_per_genAF?: number;
+};
+
+// a real, sourced person who lives this use of the water — what drives them beyond price
+export type Person = {
+  name: string;
+  role: string;
+  org: string;
+  drives: string;
+  source: string;
+  source_url: string;
+};
+
 export type Benefit = {
   slug: string;
   label: string;
@@ -29,6 +54,8 @@ export type Benefit = {
   dissertation?: string; // the relationship, in depth; may contain [n] footnote markers
   derivation?: string; // how the number + linear coefficient were derived
   citations?: Citation[]; // footnotes referenced by [n] markers, listed at page bottom
+  on_ground?: OnGround; // a non-dollar way to feel the value (scales with the slider)
+  person?: Person; // a real, sourced person whose stake in the water this is
 };
 
 export type Rollup = {
@@ -145,4 +172,13 @@ export function fmtNum(n: number, d = 0): string {
 // scale a per-genAF coefficient set to absolute dollars at a chosen generated-water quantity
 export function scaleCoef(c: Coef, genAF: number): Range3 {
   return [c.p10 * genAF, c.p50 * genAF, c.p90 * genAF];
+}
+
+// format a natural-unit count: small values keep a decimal, large values get commas
+export function fmtStat(n: number): string {
+  if (n === undefined || n === null || isNaN(n)) return "—";
+  const a = Math.abs(n);
+  if (a >= 1e6) return `${(n / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })} million`;
+  if (a < 10) return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
+  return Math.round(n).toLocaleString();
 }
