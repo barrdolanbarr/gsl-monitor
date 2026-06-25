@@ -3,7 +3,7 @@
     "model": "Bear River inch-value model (reconciled, 80/20 snow/rain)",
     "n_draws": 200000,
     "seed": 42,
-    "note": "Every dollar reproduces rainmaker-followup/bear_inch_master.py exactly. Multiply any *_per_genAF field by a 'water generated' quantity (AF) to rescale. Unit values are sourced marginal/avoided-cost anchors, illustrative \u2014 not company figures."
+    "note": "Every dollar reproduces rainmaker-followup/bear_inch_master.py exactly. Multiply any *_per_genAF field by a 'water generated' quantity (AF) to rescale. Unit values are sourced marginal/avoided-cost anchors, illustrative — not company figures."
   },
   "basin": {
     "drainage_area_sqmi": 7500,
@@ -44,7 +44,7 @@
       "value": "recharge + wildfire"
     },
     {
-      "fate": "Sublimates off the snow \u2014 lost",
+      "fate": "Sublimates off the snow — lost",
       "af": 93357,
       "path": "loss",
       "value": "nobody"
@@ -77,9 +77,23 @@
         "hi": 120,
         "unit": "$/AF net to water"
       },
-      "mechanism": "New streamflow is diverted to alfalfa/hay. Forage is the lowest-value use per acre-foot in the basin \u2014 the central irony of the Bear.",
+      "mechanism": "New streamflow is diverted to alfalfa/hay. Forage is the lowest-value use per acre-foot in the basin — the central irony of the Bear.",
       "relationship": "Each diverted acre-foot of irrigation water is worth its net return to the water itself.",
-      "source": "University of Nevada Reno Extension / Arizona Farm Bureau \u2014 alfalfa water use & net value per AF."
+      "source": "University of Nevada Reno Extension / Arizona Farm Bureau — alfalfa water use & net value per AF.",
+      "dissertation": "The Bear River is over-allocated — more water is promised on paper than the river reliably carries — and roughly 90% of all withdrawals are agricultural, overwhelmingly alfalfa and grass hay.[1] When a marginal acre-foot of new streamflow is diverted to a farm, the economically correct thing to value is not the gross revenue of the crop but the *net return to the water itself*: gross crop revenue minus every non-water cost (seed, labor, machinery, land). That residual is what the water, specifically, earns.\n\nThis produces the central irony of the basin: the use that takes the *most* water is the *lowest*-value use per acre-foot. Net return to water for alfalfa and hay across the Intermountain West runs on the order of $30–120 per acre-foot, depending on hay price and yield.[2] We deliberately anchor on this conservative net-return figure rather than a gross or replacement-cost number, because it is the marginal value an economist would defend — and because being conservative here is what lets the higher-value ecological links stand unchallenged.",
+      "derivation": "This is a single relationship of the model's universal shape — add water → a share reaches this use → multiply by a sourced unit value. Of the seeded inch, ~140,000 AF becomes streamflow (P50); the agricultural share of that streamflow is drawn each Monte-Carlo iteration from a triangular distribution centered at 50% (range 35–65%), giving ~70,000 AF to farms. Each iteration that volume is multiplied by a net-return-to-water unit value drawn from triangular($30 / $70 / $120 per AF). Running 200,000 draws (seed 42) and reading the 10th/50th/90th percentiles yields $3.3M / $5.0M / $7.3M per year. The page's per-acre-foot coefficient is simply the slope of that line, so the slider rescales it exactly.",
+      "citations": [
+        {
+          "n": 1,
+          "label": "Utah Division of Water Resources — Bear River basin overview (largest tributary to the Great Salt Lake, ~1.2M AF avg inflow).",
+          "url": "https://water.utah.gov/interstate-streams/bear-river/"
+        },
+        {
+          "n": 2,
+          "label": "University of Nevada, Reno Extension — alfalfa hay establishment, production costs & returns (net return to water for hay).",
+          "url": "https://extension.unr.edu/publication.aspx?PubID=3855"
+        }
+      ]
     },
     {
       "slug": "municipal",
@@ -107,9 +121,18 @@
         "hi": 600,
         "unit": "$/AF"
       },
-      "mechanism": "A small share of new streamflow is captured for cities and industry \u2014 small in volume, highest in value per acre-foot.",
+      "mechanism": "A small share of new streamflow is captured for cities and industry — small in volume, highest in value per acre-foot.",
       "relationship": "Each acre-foot of municipal supply is valued at the price Utah is already prepared to pay for it.",
-      "source": "Bear River Development project \u2014 220,000 AF/yr at a quoted ~$365\u2013400/AF ($1.5\u20132.8B capital)."
+      "source": "Bear River Development project — 220,000 AF/yr at a quoted ~$365–400/AF ($1.5–2.8B capital).",
+      "dissertation": "Cities and industry take the smallest *volume* of the basin's water but assign it the highest *value* per acre-foot — the mirror image of irrigation. The cleanest available anchor is revealed preference: the State of Utah's proposed Bear River Development would store up to ~500,000 AF and divert ~220,000 AF/yr of this same water for the Wasatch Front, at a quoted unit cost on the order of $365–400/AF (against $1.5–2.8B of capital).[1] That is, by definition, a price Utah has already declared itself willing to pay.\n\nUsing that as the municipal unit value is defensible precisely because it is a market-tested number for *this river*, not a benefit transfer from elsewhere. It also exposes the policy tension the model exists to illuminate: moving an acre-foot from alfalfa (~$70/AF net) to a tap (~$420/AF) is a five-to-six-fold increase in measured value for the identical water — so a flat basin-wide $/AF systematically misstates what reallocation is worth.",
+      "derivation": "Same shape as every other use. The municipal/industrial share of streamflow is drawn triangular(0% / 8% / 20%) and capped so agriculture plus M&I never exceeds 100% of streamflow, giving ~13,000 AF at P50. That volume is multiplied by a unit value drawn triangular($350 / $420 / $600 per AF), anchored on the Bear River Development quote.[1] Across 200,000 joint draws the annual value resolves to $2.5M / $5.8M / $9.9M (P10/P50/P90). The wide spread reflects genuine uncertainty in both how much new water cities capture and what they ultimately pay.",
+      "citations": [
+        {
+          "n": 1,
+          "label": "Utah Division of Water Resources — Bear River Development (220,000 AF/yr; quoted ~$365–400/AF; $1.5–2.8B capital).",
+          "url": "https://water.utah.gov/bear-river-dev/"
+        }
+      ]
     },
     {
       "slug": "hydropower",
@@ -137,9 +160,18 @@
         "hi": 8,
         "unit": "$/AF passthrough"
       },
-      "mechanism": "Water is non-consumptive here \u2014 every acre-foot in the river generates as it passes the PacifiCorp dam cascade (Soda, Grace, Oneida, Cutler) on its way down.",
+      "mechanism": "Water is non-consumptive here — every acre-foot in the river generates as it passes the PacifiCorp dam cascade (Soda, Grace, Oneida, Cutler) on its way down.",
       "relationship": "Every acre-foot of streamflow earns run-of-river generation as it passes the cascade.",
-      "source": "PacifiCorp Bear River hydroelectric cascade; ~130 kWh/AF \u00d7 wholesale price."
+      "source": "PacifiCorp Bear River hydroelectric cascade; ~130 kWh/AF × wholesale price.",
+      "dissertation": "Hydropower is the one use that is *non-consumptive*: the water is not removed from the river, it simply spins turbines on its way downhill. Every acre-foot that stays in the channel generates as it passes the PacifiCorp Bear River cascade — Soda (14 MW), Grace (33 MW), and Oneida in southeastern Idaho, with Cutler further downstream in Utah.[1]\n\nBecause generation consumes none of the water, hydropower earns on the *entire* ~140,000 AF of new streamflow, not merely the diverted share — and it can stack on top of every other in-channel use without double-counting, since a kilowatt-hour is a genuinely different product from a diverted acre-foot. The trade-off is that the value *per* acre-foot is small (on the order of $3–8/AF, roughly 130 kWh/AF times a wholesale price), so hydropower is a thin margin applied to a large volume rather than a high-value claim on a small one.",
+      "derivation": "Unusually simple: the full streamflow (141,294 AF at P50) is multiplied by a passthrough unit value drawn triangular($3 / $5 / $8 per AF), itself built from ~130 kWh/AF times a wholesale electricity price. No diversion share enters because the water is non-consumptive. Over 200,000 draws this gives $0.5M / $0.7M / $1.0M per year (P10/P50/P90) — the tightest distribution of any use, because both the volume and the per-unit physics are well constrained.",
+      "citations": [
+        {
+          "n": 1,
+          "label": "PacifiCorp — Bear River hydroelectric cascade (Soda 14 MW, Grace 33 MW, Oneida; Cutler downstream).",
+          "url": "https://www.pacificorp.com/energy/hydro/bear-river.html"
+        }
+      ]
     },
     {
       "slug": "instream",
@@ -167,9 +199,38 @@
         "hi": 300,
         "unit": "$/AF/yr"
       },
-      "mechanism": "The water NOT diverted stays in the channel. A fishing day is a genuinely different product from a kilowatt-hour, so recreation can stack on hydropower for this water \u2014 but never on water already sent to farms and cities.",
+      "mechanism": "The water NOT diverted stays in the channel. A fishing day is a genuinely different product from a kilowatt-hour, so recreation can stack on hydropower for this water — but never on water already sent to farms and cities.",
       "relationship": "Each acre-foot left in the channel supports angling and recreation value.",
-      "source": "WestWater Research / western water markets (instream leases $115\u2013350/AF); UF/IFAS recreation surplus ~$95/day."
+      "source": "WestWater Research / western water markets (instream leases $115–350/AF); UF/IFAS recreation surplus ~$95/day.",
+      "dissertation": "This is where the dissertation-level reframing bites hardest. The water *not* diverted stays in the channel, and its headline endpoint is a native cold-water fishery: the Bonneville cutthroat trout, Utah's state fish, native to the Bear drainage and classified as high climate-risk across much of its Bear-basin range.[1] Trout distribution is governed first by temperature and second by flow, and cold-water fish are physiologically excluded above roughly 19.5 °C.[2]\n\nA seeded inch is not generic water — it is high-elevation snowpack, a natural reservoir that releases on a slow recession and therefore disproportionately augments *summer baseflow*, the single binding constraint in a snowmelt-fed arid river. Under the natural-flow paradigm the relevant production functions are threshold-shaped, not linear:[3] a 1–2 °C cooling on a reach sitting near the exclusion temperature can re-open kilometers of habitat — a discontinuous jump in value — while the identical cooling on an already-cold reach buys almost nothing. A flat $/AF therefore mis-prices this water, usually *downward*, exactly where the value concentrates. We monetize it through western instream-lease comparables ($115–350/AF)[4] and recreational-angling consumer surplus (~$71–95/angler-day),[5] and we flag the confidence as medium-low because these are transferred values, not a Bear-specific demand curve.",
+      "derivation": "The in-channel volume is the residual of streamflow after agricultural and municipal diversions — about 57,000 AF at P50 — so it is mechanically guaranteed not to overlap with the irrigation or city links (different water). Each iteration that volume is multiplied by an instream unit value drawn triangular($40 / $120 / $300 per AF/yr), a range spanning lease comparables and recreation surplus. Across 200,000 draws the result is $4.5M / $8.3M / $13.9M (P10/P50/P90). The honest caveat carried in the model: this linear coefficient is the *average* treatment; the threshold science above says the true marginal value is state-dependent, which is the argument for targeting seeding to near-threshold reaches rather than spreading it evenly.",
+      "citations": [
+        {
+          "n": 1,
+          "label": "Trout Unlimited — Bonneville cutthroat trout (Utah's state fish; native to the Bear drainage).",
+          "url": "https://www.tu.org/magazine/fishing/everything-you-wanted-to-know-bonneville-cutthroat-trout/"
+        },
+        {
+          "n": 2,
+          "label": "National Research Council, 'Valuing River Ecosystem Services' (Appendix A, River Science at the USGS, NAP) — production-function caveats; low-summer-flow services.",
+          "url": "https://nap.nationalacademies.org/read/11773/chapter/11"
+        },
+        {
+          "n": 3,
+          "label": "Poff et al. (1997), 'The Natural Flow Regime,' BioScience 47(11):769–784 — the five components of flow; threshold-shaped ecological response.",
+          "url": "https://academic.oup.com/bioscience/article/47/11/769/229917"
+        },
+        {
+          "n": 4,
+          "label": "WestWater Research / Western Water Market — western instream & water-right lease comparables (~$115–350/AF).",
+          "url": "https://westernwatermarket.com/west-water-research"
+        },
+        {
+          "n": 5,
+          "label": "UF/IFAS EDIS FE1067 — economic value of freshwater recreation (benefit-transfer; ~$71/angler-day WTP).",
+          "url": "https://edis.ifas.ufl.edu/publication/fe1067"
+        }
+      ]
     },
     {
       "slug": "recharge",
@@ -199,7 +260,16 @@
       },
       "mechanism": "Deep percolation that reaches usable aquifer storage offsets future pumping. Diffuse basin-wide percolation is mostly not recoverable, so the literature value is discounted hard.",
       "relationship": "Each acre-foot of recharge offsets future pumping at an avoided-cost value.",
-      "source": "Managed-aquifer-recharge literature ($90\u20131,100/AF, median ~$390), discounted to $20\u2013250/AF here."
+      "source": "Managed-aquifer-recharge literature ($90–1,100/AF, median ~$390), discounted to $20–250/AF here.",
+      "dissertation": "Some of the inch never reaches the river at all — it percolates into the soil and, in part, down to usable aquifer storage. Where it reaches a recoverable aquifer, it offsets future pumping, and the avoided cost of that pumping is a well-established way to value it. The managed-aquifer-recharge literature spans $90–1,100/AF with a median near $390/AF.[1]\n\nWe discount that hard — to $20–250/AF — for an honest physical reason: diffuse, basin-wide percolation is mostly *not* recoverable in the way an engineered recharge basin's water is, so transferring the full MAR value would overstate it. Recharge also does double duty the dollar figure deliberately leaves on the table: it sustains groundwater-dependent vegetation and returns to the channel as late-season baseflow, closing a loop back to the in-channel fishery link. We note that richer value qualitatively rather than adding it, to avoid double-counting the same water.",
+      "derivation": "The water that does not run off (gross inch minus streamflow, ~260,000 AF) is partitioned each iteration into sublimation, evapotranspiration, and recharge using three triangular shares that are normalized to sum to one — this is what guarantees the whole 400,000-AF budget closes to less than a thousandth of an acre-foot in every run. The recharge slice (~57,000 AF at P50) is multiplied by a unit value drawn triangular($20 / $80 / $250 per AF), already discounted from the MAR literature.[1] Over 200,000 draws: $3.0M / $6.2M / $11.2M (P10/P50/P90).",
+      "citations": [
+        {
+          "n": 1,
+          "label": "Maliva (2014), 'Economics of Managed Aquifer Recharge,' Water 6(5):1257 — MAR cost $90–1,100/AF, median ~$390.",
+          "url": "https://www.mdpi.com/2073-4441/6/5/1257/htm"
+        }
+      ]
     },
     {
       "slug": "forage",
@@ -229,7 +299,16 @@
       },
       "mechanism": "Growing-season soil moisture drives forage on dryland range. Real and broad, but the marginal value of water on dryland range is far below irrigated hay.",
       "relationship": "Each acre-foot of growing-season soil moisture adds dryland forage value.",
-      "source": "USU/Extension rangeland productivity; 1 AUM \u2248 780 lbs dry forage."
+      "source": "USU/Extension rangeland productivity; 1 AUM ≈ 780 lbs dry forage.",
+      "dissertation": "About three-quarters of the basin is grazing land, so the broadest — if lowest-intensity — terrestrial endpoint is dryland forage. Growing-season soil moisture is the limiting input to net primary productivity on rangeland, and snowmelt timing sets the length of the green-up window: earlier, more abundant moisture lengthens the productive season and adds forage.\n\nThis is real and spatially enormous, but the marginal value of water on dryland range is far below irrigated hay — a useful sanity check on anyone tempted to value all 400,000 acre-feet at crop-water prices. Forage is converted to animal-unit-months (1 AUM ≈ 780 lbs of dry forage) and priced at $8–45/AF, an order of magnitude under municipal water. Confidence is medium-low: the mechanism is solid, the per-acre-foot coefficient on diffuse rangeland is not.",
+      "derivation": "The evapotranspiration slice of the non-runoff water — the moisture that plants actually transpire, ~107,000 AF at P50 — is the volume here, again drawn from the normalized three-way partition so it cannot overlap with recharge or the in-channel uses. It is multiplied by a forage unit value drawn triangular($8 / $20 / $45 per AF), built up from AUM productivity and grazing-lease rates. Across 200,000 draws: $1.5M / $2.5M / $3.9M (P10/P50/P90).",
+      "citations": [
+        {
+          "n": 1,
+          "label": "National Research Council, 'Valuing River Ecosystem Services' (Appendix A, River Science at the USGS, NAP) — production-function caveats; low-summer-flow services.",
+          "url": "https://nap.nationalacademies.org/read/11773/chapter/11"
+        }
+      ]
     },
     {
       "slug": "wildfire",
@@ -257,9 +336,18 @@
         "hi": 25,
         "unit": "$/AF"
       },
-      "mechanism": "Added late-season soil moisture lowers fuel flammability. Suppression and damage costs are large, but the acre-foot \u2192 fire-probability link is genuinely unquantified, so this is carried as a bounded co-benefit, not a load-bearing number.",
+      "mechanism": "Added late-season soil moisture lowers fuel flammability. Suppression and damage costs are large, but the acre-foot → fire-probability link is genuinely unquantified, so this is carried as a bounded co-benefit, not a load-bearing number.",
       "relationship": "Each acre-foot of soil moisture is a bounded co-benefit against wildfire cost.",
-      "source": "Federal suppression ~$2.9B/yr; per-acre damage ~$500; fuel-moisture link qualitative."
+      "source": "Federal suppression ~$2.9B/yr; per-acre damage ~$500; fuel-moisture link qualitative.",
+      "dissertation": "Added late-season soil moisture lowers fuel flammability, and the costs it could offset are genuinely large: federal suppression runs on the order of $2.9B/yr and per-acre damages around $500. So the *ceiling* on this benefit is real.\n\nBut the specific link from one acre-foot of soil moisture to a change in fire probability is, honestly, unquantified — it depends on fuel type, weather, ignition, and timing in ways no single coefficient captures. We therefore carry wildfire as a *bounded co-benefit* rather than a load-bearing number, and the conservative headline total excludes it. Showing it transparently, flagged LOW, is part of what makes the high-confidence links credible: the model is not hiding its weakest inferences inside the headline.",
+      "derivation": "The volume is the combined evapotranspiration-plus-recharge soil moisture (~165,000 AF at P50) — the water that actually wets fuels — multiplied by a deliberately low unit value drawn triangular($2 / $8 / $25 per AF). Across 200,000 draws this yields $0.9M / $1.8M / $3.1M (P10/P50/P90). Because the acre-foot-to-fire-risk coefficient is an informed guess, this row is reported for completeness and held *out* of the combined defensible total.",
+      "citations": [
+        {
+          "n": 1,
+          "label": "National Research Council, 'Valuing River Ecosystem Services' (Appendix A, River Science at the USGS, NAP) — production-function caveats; low-summer-flow services.",
+          "url": "https://nap.nationalacademies.org/read/11773/chapter/11"
+        }
+      ]
     },
     {
       "slug": "carbon",
@@ -289,7 +377,16 @@
       },
       "mechanism": "Incremental plant and soil carbon from green-up, valued at the EPA social cost of carbon. Most forage carbon cycles annually, so the permanent fraction is small.",
       "relationship": "Each acre-foot of green-up stores a small, permanent fraction of carbon.",
-      "source": "EPA (2023/2025) social cost of carbon ~$190\u2013255/ton CO\u2082 on incremental biomass."
+      "source": "EPA (2023/2025) social cost of carbon ~$190–255/ton CO₂ on incremental biomass.",
+      "dissertation": "Green-up stores carbon — incremental plant and soil carbon from the extra productivity the inch supports — which can be valued at the federal social cost of carbon, ~$190–255 per ton of CO₂ in EPA's 2023 estimates.[1]\n\nThe catch is permanence: most forage and herbaceous carbon cycles back to the atmosphere within a year or two, so only a small, durable fraction counts as a lasting climate benefit. That makes this an honest but minor line, flagged LOW and excluded from the conservative headline. As with wildfire, the point of carrying it explicitly is discipline, not magnitude.",
+      "derivation": "The evapotranspiration slice (~107,000 AF at P50, the same green-up water as forage but a different service, so it is not additive within that water without care) is multiplied by an SCC-derived unit value drawn triangular($1 / $4 / $12 per AF) — the social cost of carbon applied to the small permanent fraction of incremental biomass. Across 200,000 draws: $0.3M / $0.6M / $1.0M (P10/P50/P90).",
+      "citations": [
+        {
+          "n": 1,
+          "label": "U.S. EPA (2023) — Report on the Social Cost of Greenhouse Gases (~$190–255/ton CO₂).",
+          "url": "https://www.epa.gov/system/files/documents/2023-12/epa_scghg_2023_report_final.pdf"
+        }
+      ]
     }
   ],
   "rollups": [
@@ -321,7 +418,7 @@
         "p50": 44.3340325,
         "p90": 61.7468875
       },
-      "note": "Forage + recharge + fish/recreation \u2014 the off-river water Layer 1 ignores."
+      "note": "Forage + recharge + fish/recreation — the off-river water Layer 1 ignores."
     },
     {
       "key": "combined",
@@ -392,7 +489,7 @@
           5911977,
           8403538
         ],
-        "basis": "Exposed-lakebed PM2.5/arsenic; Owens Lake analog; GSL lakebed = 23\u201334% of Wasatch dust."
+        "basis": "Exposed-lakebed PM2.5/arsenic; Owens Lake analog; GSL lakebed = 23–34% of Wasatch dust."
       },
       {
         "label": "Lake ecosystem & industry (brine shrimp, minerals, birds)",
@@ -410,7 +507,7 @@
           2351693,
           3442056
         ],
-        "basis": "Lake adds 5\u201310% of Utah snow, +5\u20137 ski weeks; ski ~$1.2B / 20K jobs."
+        "basis": "Lake adds 5–10% of Utah snow, +5–7 ski weeks; ski ~$1.2B / 20K jobs."
       },
       {
         "label": "Lake recreation & birding",
@@ -422,11 +519,12 @@
         "basis": "Wildlife-viewing consumer surplus ~$48/day."
       }
     ],
-    "honesty": "This is the ONLY Great Salt Lake figure that matters for the seeding question: how much of the inch reaches the lake and what that water is jointly worth. The anchors are deliberately modest \u2014 seeding moves lake LEVEL by 2\u20133 orders of magnitude too little to refill it, so the defensible headline value sits upstream, not in the lake."
+    "honesty": "This is the ONLY Great Salt Lake figure that matters for the seeding question: how much of the inch reaches the lake and what that water is jointly worth. The anchors are deliberately modest — seeding moves lake LEVEL by 2–3 orders of magnitude too little to refill it, so the defensible headline value sits upstream, not in the lake."
   },
   "presets": {
     "seeding_generated_af": 4675,
     "quarter_inch_af": 100000,
     "one_inch_af": 400000
-  }
+  },
+  "methodology_note": "Every dollar on this site is one relationship of the same shape: add water, a sourced share of it reaches a use, and that volume is multiplied by a sourced unit value. All eight relationships are computed from a single Monte-Carlo simulation (200,000 draws, seed 42) so they share one joint distribution and the water budget closes exactly. Each uncertain input is a triangular distribution between a low, central, and high anchor; we report the 10th, 50th, and 90th percentiles. Value is linear in water generated, so the per-acre-foot coefficient is just the slope of the line and the slider rescales every figure."
 }

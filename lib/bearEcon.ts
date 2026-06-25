@@ -6,6 +6,9 @@
 export type Range3 = [number, number, number]; // [p10, p50, p90]
 export type Coef = { p10: number; p50: number; p90: number };
 
+// a footnoted source: n is the in-text marker, label is the citation, url is the direct link
+export type Citation = { n: number; label: string; url: string };
+
 export type Benefit = {
   slug: string;
   label: string;
@@ -22,6 +25,10 @@ export type Benefit = {
   mechanism: string;
   relationship: string;
   source: string;
+  // PhD-level enrichment (optional — present for all eight core benefits)
+  dissertation?: string; // the relationship, in depth; may contain [n] footnote markers
+  derivation?: string; // how the number + linear coefficient were derived
+  citations?: Citation[]; // footnotes referenced by [n] markers, listed at page bottom
 };
 
 export type Rollup = {
@@ -72,7 +79,25 @@ export type BearEcon = {
   rollups: Rollup[];
   gsl_terminal: GslTerminal;
   presets: { seeding_generated_af: number; quarter_inch_af: number; one_inch_af: number };
+  methodology_note?: string;
 };
+
+// Render a string containing [n] footnote markers into React-friendly parts.
+// Returns an array of strings and { marker } objects so a component can map them
+// to <sup> links. Kept here so every page renders footnotes identically.
+export function splitFootnotes(text: string): Array<string | { marker: number }> {
+  const parts: Array<string | { marker: number }> = [];
+  const re = /\[(\d+)\]/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push({ marker: Number(m[1]) });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
 
 // ---- path colors (where the water physically goes) ----
 export const PATH_COLOR: Record<string, string> = {

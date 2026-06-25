@@ -3,12 +3,50 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  BearEcon, Benefit, fmtUSD, fmtAF, scaleCoef,
-  CONF_COLOR, CONF_LABEL,
+  BearEcon, Benefit, Citation, fmtUSD, fmtAF, scaleCoef,
+  CONF_COLOR, CONF_LABEL, splitFootnotes,
 } from "@/lib/bearEcon";
 import { useGenAF } from "../../components/useGenAF";
 
 const INCH_AF = 400000;
+
+// Render prose that contains [n] footnote markers, turning each marker into a
+// superscript link to the matching footnote at the bottom of the page.
+function Prose({ text }: { text: string }) {
+  const paras = text.split("\n\n");
+  return (
+    <>
+      {paras.map((para, pi) => (
+        <p key={pi} style={pi > 0 ? { marginTop: 12 } : undefined}>
+          {splitFootnotes(para).map((part, i) =>
+            typeof part === "string" ? (
+              <span key={i}>{part}</span>
+            ) : (
+              <a key={i} href={`#fn-${part.marker}`} className="fnref">{part.marker}</a>
+            )
+          )}
+        </p>
+      ))}
+    </>
+  );
+}
+
+function Footnotes({ citations }: { citations: Citation[] }) {
+  return (
+    <div className="fnlist">
+      <div className="fnlist-h">Sources &amp; footnotes</div>
+      <ol>
+        {citations.map((c) => (
+          <li key={c.n} id={`fn-${c.n}`}>
+            <span className="fn-n">{c.n}.</span>{" "}
+            <span>{c.label}</span>{" "}
+            <a href={c.url} target="_blank" rel="noopener noreferrer">{c.url}</a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
 
 export default function BenefitDetail() {
   const params = useParams();
@@ -105,6 +143,21 @@ export default function BenefitDetail() {
             <p>{b.mechanism}</p>
           </div>
 
+          {b.dissertation && (
+            <div className="det-card phd-card">
+              <h3>The relationship, in depth</h3>
+              <span className="phd-tag">dissertation-level</span>
+              <div className="phd-body"><Prose text={b.dissertation} /></div>
+            </div>
+          )}
+
+          {b.derivation && (
+            <div className="det-card">
+              <h3>How this number &amp; its linear coefficient were derived</h3>
+              <div className="phd-body"><Prose text={b.derivation} /></div>
+            </div>
+          )}
+
           <div className="det-card">
             <h3>The unit value behind the number</h3>
             <div className="kv"><span className="kk">Low anchor</span><span className="vv">{uv.lo} {uv.unit}</span></div>
@@ -143,9 +196,11 @@ export default function BenefitDetail() {
         </aside>
       </div>
 
+      {b.citations && b.citations.length > 0 && <Footnotes citations={b.citations} />}
+
       <div className="footnote">
-        Per-acre-foot coefficients are derived from the master Monte Carlo (seed {econ.meta.seed}); multiply by
-        any generated-water quantity for a total. Unit values are sourced anchors, illustrative — not company figures.
+        Per-acre-foot coefficients are derived from the master Monte Carlo (seed {econ.meta.seed}, {econ.meta.n_draws.toLocaleString()} draws);
+        multiply by any generated-water quantity for a total. Unit values are sourced anchors, illustrative — not company figures.
       </div>
     </div>
   );

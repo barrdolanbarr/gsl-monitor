@@ -504,3 +504,38 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 }
 .steps-plain li b{font-weight:700}
 .steps-plain li i{font-style:italic}
+
+/* ---- footnote markers & lists ---- */
+.fnref{
+  font-family:var(--mono);font-size:.62em;font-weight:700;line-height:0;
+  vertical-align:super;color:var(--accent2);text-decoration:none;
+  margin-left:1px;padding:0 1px;cursor:pointer;
+}
+.fnref:hover{text-decoration:underline}
+.fnlist{
+  margin-top:26px;padding:18px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+}
+.fnlist-h{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:12px;
+}
+.fnlist ol{list-style:none;counter-reset:none;display:flex;flex-direction:column;gap:9px;margin:0;padding:0}
+.fnlist li{
+  font-size:12.5px;line-height:1.55;color:var(--ink);
+  padding-left:4px;scroll-margin-top:90px;
+}
+.fnlist li:target{background:#fff7e8;border-radius:6px;box-shadow:0 0 0 6px #fff7e8}
+.fnlist .fn-n{font-family:var(--mono);font-weight:700;color:var(--accent2);margin-right:2px}
+.fnlist li a{color:var(--accent2);word-break:break-all}
+
+/* ---- PhD dissertation block ---- */
+.phd-card{position:relative;border-left:3px solid var(--accent2)}
+.phd-tag{
+  position:absolute;top:14px;right:16px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent2);background:#eef4f6;border:1px solid #cfe0e6;border-radius:999px;
+  padding:3px 9px;
+}
+.phd-body{font-size:13.5px;line-height:1.68;color:var(--ink)}
+.phd-body p{margin:0}
