@@ -598,3 +598,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 }
 .og-math-body p { margin: 0; }
 .og-math-body p + p { margin-top: 10px; }
+
+/* clickable sources for the conversion factors used in the math */
+.og-math-cites { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.og-math-cites .omc-h {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted); margin-bottom: 1px;
+}
+.og-math-cites a {
+  font-size: 12px; line-height: 1.45; color: var(--accent2);
+  text-decoration: none; border-bottom: 1px solid transparent; width: fit-content;
+}
+.og-math-cites a:hover { border-bottom-color: var(--accent2); }

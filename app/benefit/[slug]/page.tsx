@@ -160,6 +160,14 @@ export default function BenefitDetail() {
                 <details className="og-math">
                   <summary>Show the math — where {fmtStat(b.on_ground.stat_per_genAF * genAF)} comes from</summary>
                   <div className="og-math-body"><Prose text={b.on_ground.math} /></div>
+                  {b.on_ground.math_cites && b.on_ground.math_cites.length > 0 && (
+                    <div className="og-math-cites">
+                      <span className="omc-h">Factor sources</span>
+                      {b.on_ground.math_cites.map((c, i) => (
+                        <a key={i} href={c.url} target="_blank" rel="noopener noreferrer">{c.label}</a>
+                      ))}
+                    </div>
+                  )}
                 </details>
               )}
               <div className="og-foot">
