@@ -104,7 +104,8 @@
         "source": "Salt Lake Tribune / Utah water-use data — ~1.38 AF per ton of alfalfa",
         "source_url": "https://www.sltrib.com/news/environment/2022/11/24/one-crop-uses-more-than-half/",
         "stat_per_genAF": 0.12714274462714154,
-        "sec_per_genAF": 4.238091487571384
+        "sec_per_genAF": 4.238091487571384,
+        "math": "Step 1 — how much water reaches farms. Across the model, 17.5% of every acre-foot you generate ends up serving irrigation (its share of the basin's water fate). So acre-feet to farms = water generated × 0.175.\n\nStep 2 — water to hay. Utah water-use data put alfalfa at roughly 1.38 acre-feet per ton, so one acre-foot grows 1 ÷ 1.38 = 0.72 tons. Multiply: AF to farms × 0.72 tons/AF.\n\nWorked at one inch (400,000 AF generated): 400,000 × 0.175 = 70,183 AF to farms; × 0.72 = 50,857 tons of hay. The bale figure is the same tonnage ÷ 0.0414 ton per 60-lb small bale (≈ 24.15 bales per acre-foot)."
       },
       "person": {
         "name": "Lynn Egley",
@@ -160,7 +161,8 @@
         "blurb": "Utah sizes culinary systems at about 0.45 acre-feet per household per year, indoor and out. The municipal slice is small, but it still covers tens of thousands of homes for a full year — the difference between a town that can say yes to its next subdivision and one that can't.",
         "source": "Utah Division of Water Rights — 0.45 AF per family planning figure",
         "source_url": "https://www.waterrights.utah.gov/wrinfo/policy/wateruse.asp",
-        "stat_per_genAF": 0.07060734636494598
+        "stat_per_genAF": 0.07060734636494598,
+        "math": "Step 1 — water to taps. 3.2% of the water you generate is priced at municipal value (its share of the basin's fate): AF to cities = water generated × 0.032.\n\nStep 2 — AF to households. Utah's Division of Water Rights uses 0.45 acre-foot as a household's annual indoor+outdoor planning figure, so one acre-foot covers 1 ÷ 0.45 = 2.22 households for a year.\n\nWorked at one inch: 400,000 × 0.032 = 12,709 AF to cities; × 2.22 = 28,243 household-years."
       },
       "person": {
         "name": "Voneene Jorgensen",
@@ -219,7 +221,8 @@
         "source": "PacifiCorp Bear River hydro (capacity) + U.S. EIA residential use",
         "source_url": "https://www.pacificorp.com/energy/hydro/bear-river.html",
         "stat_per_genAF": 0.15895552672111277,
-        "sec_per_genAF": 0.015138621592486929
+        "sec_per_genAF": 0.015138621592486929,
+        "math": "Step 1 — water through the turbines. Hydropower earns on the in-channel water, 35.3% of what you generate: AF past the dams = water generated × 0.353.\n\nStep 2 — AF to electricity. The PacifiCorp Bear River cascade plus EIA conversion give about 0.45 MWh generated per acre-foot routed through the powerhouses.\n\nWorked at one inch: 400,000 × 0.353 = 141,294 AF through the cascade; × 0.45 = 63,582 MWh. Homes = that MWh ÷ 10.5 MWh (average U.S. household/yr) ≈ 0.04 homes per acre-foot."
       },
       "person": {
         "name": "Mark Stenberg",
@@ -298,7 +301,8 @@
         "source": "Utah DWR habitat-per-project framing + natural-flow baseflow ecology",
         "source_url": "https://wildlife.utah.gov/news/wildlife-blog/1112-cutthroat-trout-conservation-success.html",
         "stat_per_genAF": 0.00020390458801218897,
-        "sec_per_genAF": 0.10195229400609448
+        "sec_per_genAF": 0.10195229400609448,
+        "math": "Step 1 — water left in the channel. 14.3% of generated water stays instream as baseflow: AF instream = water generated × 0.143.\n\nStep 2 — AF to stream-miles. This is the softest conversion on the site — a planning-grade estimate, not a fish count. Utah DWR habitat-per-project framing implies roughly one mile of cold, connected trout reach re-opened per ~700 acre-feet of restored summer baseflow, i.e. 1 ÷ 700 = 0.0014 mile per acre-foot.\n\nWorked at one inch: 400,000 × 0.143 = 57,093 AF instream; × 0.0014 = 82 miles. The trout count applies a literature density of ~500 adult Bonneville cutthroat per restored mile."
       },
       "person": {
         "name": "Jim DeRito",
@@ -354,7 +358,8 @@
         "blurb": "Water that soaks in instead of running off recharges the aquifer Cache Valley is steadily drawing down — most monitored wells in the valley are falling. Measured as drinking water, an inch's worth is a year's supply for tens of thousands of households, kept in underground storage for the next dry year.",
         "source": "Utah Division of Water Rights (0.45 AF/family) + Utah Geological Survey, Cache Valley aquifer storage",
         "source_url": "https://geology.utah.gov/map-pub/survey-notes/using-aquifers-for-water-storage-in-cache-valley/",
-        "stat_per_genAF": 0.3188227188690063
+        "stat_per_genAF": 0.3188227188690063,
+        "math": "Step 1 — water into the ground. 14.3% of generated water becomes aquifer recharge: AF banked = water generated × 0.143.\n\nStep 2 — AF to household-years. Banked water is valued against the same 0.45 AF household figure Utah uses, so one acre-foot underground = 1 ÷ 0.45 = 2.22 household-years of stored supply.\n\nWorked at one inch: 400,000 × 0.143 = 57,388 AF recharged; × 2.22 = 127,529 household-years banked."
       },
       "person": {
         "name": "Bethany Neilson",
@@ -413,7 +418,8 @@
         "source": "Wyoming Extension B-1320 (AUM concepts) + USU forage needs",
         "source_url": "https://wyoextension.org/publications/html/B1320/",
         "stat_per_genAF": 0.1336371332819654,
-        "sec_per_genAF": 0.026727426656393077
+        "sec_per_genAF": 0.026727426656393077,
+        "math": "Step 1 — water to rangeland. 26.7% of generated water grows forage on land that's never diverted: AF to range = water generated × 0.267.\n\nStep 2 — AF to AUMs. An AUM (one cow, one month) needs about 2 acre-feet of water-equivalent forage, so one acre-foot supports 0.50 AUM.\n\nWorked at one inch: 400,000 × 0.267 = 106,910 AF to range; × 0.50 = 53,455 AUMs. A cow-calf pair grazed a 5-month summer eats ~5 AUMs, so ÷ 5 ≈ 0.10 pairs per acre-foot."
       },
       "person": {
         "name": "Stewart Hayduk",
@@ -469,7 +475,8 @@
         "blurb": "Soil moisture that lingers into fire season lowers how hot and how big a watershed burns — and post-fire sediment is what fills the reservoirs Utah stores its water in. This is the softest number on the site: roughly an acre of moister ground per acre-foot retained, illustrative only.",
         "source": "USU Utah Water Research Lab — post-wildfire streamflow & reservoir sediment",
         "source_url": "https://www.usu.edu/today/story/from-flames-to-flow-utah-water-research-lab-unraveling-streamflow-changes-post-wildfire",
-        "stat_per_genAF": 0.4118377011814695
+        "stat_per_genAF": 0.4118377011814695,
+        "math": "Step 1 — water as fuel moisture. The wildfire benefit is valued on the off-river water that raises late-summer fuel moisture, 41.2% of what you generate: AF = water generated × 0.412.\n\nStep 2 — AF to acres. This is a LOW-confidence, illustrative mapping: we credit roughly one acre of improved fuel moisture per acre-foot (1.00 acre/AF) as a feel-it-on-the-ground proxy, not a fire-behavior model.\n\nWorked at one inch: 400,000 × 0.412 = 164,735 AF; × 1.00 = 164,735 acres. Treat this as the shakiest number on the site."
       },
       "person": {
         "name": "Belize Lane",
@@ -528,7 +535,8 @@
         "source": "EPA Social Cost of GHG (2023) + EPA greenhouse-gas equivalencies",
         "source_url": "https://www.epa.gov/system/files/documents/2023-12/epa_scghg_2023_report_final.pdf",
         "stat_per_genAF": 0.005626826664503806,
-        "sec_per_genAF": 0.0012232231879356098
+        "sec_per_genAF": 0.0012232231879356098,
+        "math": "Step 1 — water to plant growth. The carbon benefit rides on the same off-river water as forage, 26.7% of generated: AF = water generated × 0.267.\n\nStep 2 — AF to tons CO₂. EPA soil-and-vegetation sequestration figures imply about 0.02 ton of CO₂ held per acre-foot of added growth — LOW confidence and policy-dependent.\n\nWorked at one inch: 400,000 × 0.267 = 106,910 AF; × 0.02 = 2,251 tons CO₂. Cars-off-the-road uses EPA's 4.6 t CO₂/car-year, so ÷ 4.6 ≈ 0.00 cars per acre-foot."
       },
       "person": {
         "name": "Matt Yost",

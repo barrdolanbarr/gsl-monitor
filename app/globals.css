@@ -582,3 +582,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
   text-decoration:none;word-break:break-word;
 }
 .person-card .srcline:hover{text-decoration:underline}
+
+/* "Show the math" derivation toggle inside the natural-unit card */
+.og-math { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.og-math > summary {
+  cursor: pointer; font-family: var(--mono); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.02em; color: var(--amber); list-style: none; user-select: none;
+}
+.og-math > summary::-webkit-details-marker { display: none; }
+.og-math > summary::before { content: "▸ "; }
+.og-math[open] > summary::before { content: "▾ "; }
+.og-math > summary:hover { text-decoration: underline; }
+.og-math-body {
+  margin-top: 10px; font-size: 13.5px; line-height: 1.62; color: var(--ink);
+}
+.og-math-body p { margin: 0; }
+.og-math-body p + p { margin-top: 10px; }

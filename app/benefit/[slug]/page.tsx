@@ -156,6 +156,12 @@ export default function BenefitDetail() {
                 </div>
               )}
               <p className="og-blurb">{b.on_ground.blurb}</p>
+              {b.on_ground.math && (
+                <details className="og-math">
+                  <summary>Show the math — where {fmtStat(b.on_ground.stat_per_genAF * genAF)} comes from</summary>
+                  <div className="og-math-body"><Prose text={b.on_ground.math} /></div>
+                </details>
+              )}
               <div className="og-foot">
                 <span className="chip chip-conf" style={{ background: CONF_COLOR[b.on_ground.confidence] }}>{CONF_LABEL[b.on_ground.confidence]}</span>
                 <a className="srcline" href={b.on_ground.source_url} target="_blank" rel="noopener noreferrer">{b.on_ground.source}</a>

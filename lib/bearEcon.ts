@@ -22,6 +22,7 @@ export type OnGround = {
   sec_label?: string;
   sec_per_af?: number;
   sec_per_genAF?: number;
+  math?: string; // plain-language derivation of the stat (may contain \n\n paragraph breaks)
 };
 
 // a real, sourced person who lives this use of the water — what drives them beyond price
